@@ -67,6 +67,7 @@ export default class Database {
                         tx.executeSql(`CREATE TABLE IF NOT EXISTS device (serial_number VARCHAR PRIMARY KEY NOT NULL, 
                                                                         battery INTEGER NOT NULL, 
                                                                         last_sync_time VARCHAR, 
+                                                                        is_connected INT NOT NULL,
                                                                         user_id INTEGER NOT NULL, 
                                                                         created_at VARCHAR NOT NULL, 
                                                                         updated_at VARCHAR NOT NULL)`)
@@ -363,7 +364,7 @@ export default class Database {
         const devices = []
         this.initDB().then((db) => {
           db.transaction((tx) => {
-            tx.executeSql(`SELECT serial_number AS serialNumber, battery, last_sync_time AS lastSyncTime FROM device WHERE user_id = ?`, [userId]).then(([tx, results]) => {
+            tx.executeSql(`SELECT serial_number AS serialNumber, battery, last_sync_time AS lastSyncTime, is_connected FROM device WHERE user_id = ?`, [userId]).then(([tx, results]) => {
               console.log("list device query completed")
               
               var len = results.rows.length
@@ -395,8 +396,8 @@ export default class Database {
 
           let strCurDateTime = this.getCurrentDateTimeString()
           db.transaction((tx) => {
-            tx.executeSql(`INSERT INTO device (serial_number, battery, last_sync_time, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`, 
-                          [device.serialNumber, device.battery, device.lastSyncTime, device.userId,  strCurDateTime, strCurDateTime]).then(([tx, results]) => {
+            tx.executeSql(`INSERT INTO device (serial_number, battery, last_sync_time, is_connected, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`, 
+                          [device.serialNumber, device.battery, device.lastSyncTime, false, device.userId,  strCurDateTime, strCurDateTime]).then(([tx, results]) => {
               console.log(">>> insert device query completed")
               resolve(results)
             })
@@ -419,8 +420,8 @@ export default class Database {
 
           let strCurDateTime = this.getCurrentDateTimeString()
           db.transaction((tx) => {
-            tx.executeSql(`UPDATE device SET serial_number = ?, battery = ?, last_sync_time = ?, updated_at = ? WHERE id = ?`, 
-                            [device.serialNumber, device.battery, device.lastSyncTime, strCurDateTime, device.id]).then(([tx, results]) => {
+            tx.executeSql(`UPDATE device SET serial_number = ?, battery = ?, last_sync_time = ?, is_connected = ?, updated_at = ? WHERE id = ?`, 
+                            [device.serialNumber, device.battery, device.lastSyncTime, device.is_connected, strCurDateTime, device.id]).then(([tx, results]) => {
               console.log("update device query completed")
               resolve(results)
             })
@@ -463,8 +464,9 @@ export default class Database {
         this.initDB().then((db) => {
           db.transaction((tx) => {
             tx.executeSql(`SELECT t1.serial_number AS serialNumber, t1.battery, t1.time, t1.content, t1.confirmed, t2.name AS childName 
-                          FROM notification t1, child t2 
-                          WHERE user_id = ? AND t1.child_id = t2.id`, [userId]).then(([tx, results]) => {
+                          FROM notification t1
+                          LEFT JOIN child t2 ON t1.child_id = t2.id
+                          WHERE user_id = ?`, [userId]).then(([tx, results]) => {
               console.log("list notification query completed")
               
               var len = results.rows.length
@@ -531,6 +533,79 @@ export default class Database {
           console.log(err)
         })
       })  
+    }
+
+    getLastNotificationsByConnectedDevice() {   
+      return new Promise((resolve) => {
+        const notifications = []
+        this.initDB().then((db) => {
+          db.transaction((tx) => {
+            tx.executeSql(`SELECT t1.serial_number AS serialNumber, t1.battery, t1.time, t1.content, t1.confirmed, t2.name AS childName 
+                          FROM notification t1, device t3 
+                          LEFT JOIN child t2 ON t1.child_id = t2.id
+                          WHERE t1.serial_number = t3.serial_number AND t3.is_connected = 1
+                          ORDER BY time DESC
+                          LIMIT 3`, []).then(([tx, results]) => {
+              console.log("last notifications query completed")
+              
+              var len = results.rows.length
+              for (let i = 0; i < len; i++) {
+                let row = results.rows.item(i)
+                console.log(`Serial Number: ${row.serialNumber}, Battery: ${row.battery}, Time: ${row.time}, content: ${row.content}, confirmed: ${row.confirmed}, Child Name: ${row.childName}`)
+                const { serialNumber, battery, time, content, confirmed, childName } = row
+                notifications.push({ serialNumber, battery, time, content, confirmed, childName })
+              }
+
+              console.log(notifications)
+              resolve(notifications)
+            })
+          }).then((result) => {
+            this.closeDatabase(db)
+            
+          }).catch((err) => {
+            console.log(err)
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      })  
+    }
+
+    getLastNotificationsByAddedDevices() {
+      return new Promise((resolve) => {
+        const notifications = []
+        this.initDB().then((db) => {
+          db.transaction((tx) => {
+            tx.executeSql(`SELECT t1.serial_number AS serialNumber, t1.battery, t1.time, t1.content, t1.confirmed, t2.name AS childName 
+                          FROM notification t1, 
+                            (SELECT serial_number, max(time) AS recent_time FROM notification GROUP BY serial_number) t3 
+                          LEFT JOIN child t2 ON t1.child_id = t2.id
+                          WHERE t1.serial_number = t3.serial_number AND t1.time = t3.recent_time
+                          ORDER BY time DESC`, []).then(([tx, results]) => {
+              console.log("last notifications query completed")
+              
+              var len = results.rows.length
+              for (let i = 0; i < len; i++) {
+                let row = results.rows.item(i)
+                console.log(`Serial Number: ${row.serialNumber}, Battery: ${row.battery}, Time: ${row.time}, content: ${row.content}, confirmed: ${row.confirmed}, Child Name: ${row.childName}`)
+                const { serialNumber, battery, time, content, confirmed, childName } = row
+                notifications.push({ serialNumber, battery, time, content, confirmed, childName })
+              }
+
+              console.log(notifications)
+              resolve(notifications)
+            })
+          }).then((result) => {
+            this.closeDatabase(db)
+            
+          }).catch((err) => {
+            console.log(err)
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      })  
+
     }
 }
 

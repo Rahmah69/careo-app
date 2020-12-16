@@ -1,32 +1,23 @@
-import React from 'react';
+import React from 'react'
 import {
   StyleSheet,
   View,
   TouchableOpacity,
   ImageBackground,
-} from 'react-native';
+} from 'react-native'
 
 import moment from "moment"
 
-import { fonts, colors } from '../../styles';
-import { Text } from '../../components/StyledText';
+import { fonts, colors } from '../../styles'
+import { Text } from '../../components/StyledText'
 import {useDispatch, useSelector} from 'react-redux'
-import { setGestureEnable, setHeaderShown } from '../navigation/NavigationState';
+import { setGestureEnable, setHeaderShown } from '../navigation/NavigationState'
 import {DEVICE_HEIGHT} from '../Constant'
-import { ScrollView } from 'react-native-gesture-handler';
+import {db} from '../Database'
+import LastNotificationList from './LastNotificationList'
 
 export default function HomeScreen({ isExtended, setIsExtended }) {
-  // const rnsUrl = 'https://reactnativestarter.com';
-  // const handleClick = () => {
-  //   Linking.canOpenURL(rnsUrl).then(supported => {
-  //     if (supported) {
-  //       Linking.openURL(rnsUrl);
-  //     } else {
-  //       console.log(`Don't know how to open URI: ${rnsUrl}`);
-  //     }
-  //   });
-  // };
-
+  
   const userInfo = useSelector(state => state.auth.userInfo)
 
   const dispatch = useDispatch()
@@ -56,14 +47,10 @@ export default function HomeScreen({ isExtended, setIsExtended }) {
           Last Notifications
         </Text>
 
-        <ScrollView>
-        <Text size={30} bold style={styles.title}>
-          Notifications
-        </Text>
-        </ScrollView>
+        <LastNotificationList style={styles.lastNotificationList}/>
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -96,9 +83,9 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     marginTop: DEVICE_HEIGHT / 30
   },
-  lastNotification: {
-    flex: 1,
-    marginTop: DEVICE_HEIGHT / 5,
+  lastNotificationList: {
+    flex: 5,
+    marginTop: 5,
   },
   sectionHeader: {
     marginBottom: 8,
@@ -126,4 +113,4 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.primary,
   },
-});
+})

@@ -9,3 +9,8 @@ export const DEVICE_WIDTH = Dimensions.get('window').width
 export const DEVICE_HEIGHT = Dimensions.get('window').height
 
 export const DB_USERS_KEY = 'BRACELET_DB_USERS'
+
+
+export const EATING_MSG    = 'Eating'
+export const SLEEPING_MSG  = 'Sleeping'
+export const CLEANING_MSG  = 'Cleaning'
