@@ -1,12 +1,13 @@
 import React from 'react'
 import { TouchableOpacity, Image } from 'react-native'
+import NotificationManager from 'react-native-check-notification-enable'
 
 import TurnOnNotification from '../TurnOnNotification'
-import LoginScreen from '../auth/LoginScreenContainer'
+import LoginScreen from '../auth/LoginScreen'
 import RegisterScreen from '../auth/RegisterScreen'
 import TabNavigator from './MainTabNavigator'
-import GalleryScreen from '../gallery/GalleryViewContainer'
-import AvailableInFullVersion from '../../modules/availableInFullVersion/AvailableInFullVersionViewContainer'
+import NotificationListScreen from '../notification/NotificationListScreen'
+import ChildListScreen from '../child/ChildListScreen';
 
 // import ProfileScreen from '../profile/ProfileViewContainer'
 // import ArticleScreen from '../article/ArticleViewContainer'
@@ -16,6 +17,7 @@ import AvailableInFullVersion from '../../modules/availableInFullVersion/Availab
 // import AuthScreen from '../auth/AuthViewContainer'
 
 import { colors, fonts } from '../../styles'
+import UserProfileScreen from '../auth/UserProfileScreen'
 
 const headerLeftComponent = (props) => {
   return (
@@ -39,11 +41,12 @@ const headerLeftComponent = (props) => {
 
 const headerBackground = require('../../../assets/images/topBarBg.png')
 
+console.log(" called this page whenever every page rendered")
+
 const StackNavigationData = [
   {
     name: 'Turn On Notification',
     component: TurnOnNotification,
-    headerLeft: headerLeftComponent,
     headerBackground: { source: headerBackground },
     headerShown: false,
     headerTitleStyle: {
@@ -67,7 +70,7 @@ const StackNavigationData = [
   {
     name: 'Login',
     component: LoginScreen,
-    headerLeft: headerLeftComponent,
+    headerLeft: null,
     headerBackground: { source: headerBackground },
     headerShown: false,
     headerTitleStyle: {
@@ -89,8 +92,8 @@ const StackNavigationData = [
     },
   },
   {
-    name: 'Charts',
-    component: AvailableInFullVersion,
+    name: 'Child List',
+    component: ChildListScreen,
     headerLeft: headerLeftComponent,
     headerBackground: { source: headerBackground },
     headerTitleStyle: {
@@ -100,8 +103,8 @@ const StackNavigationData = [
     },
   },
   {
-    name: 'Blog',
-    component: AvailableInFullVersion,
+    name: 'Notification History',
+    component: NotificationListScreen,
     headerLeft: headerLeftComponent,
     headerBackground: { source: headerBackground },
     headerTitleStyle: {
@@ -111,63 +114,8 @@ const StackNavigationData = [
     },
   },
   {
-    name: 'Gallery',
-    component: GalleryScreen,
-    headerLeft: headerLeftComponent,
-    headerBackground: { source: headerBackground },
-    headerTitleStyle: {
-      fontFamily: fonts.primaryRegular,
-      color: colors.white,
-      fontSize: 18,
-    },
-  },
-  {
-    name: 'Profile',
-    component: AvailableInFullVersion,
-    headerLeft: headerLeftComponent,
-    headerBackground: { source: headerBackground },
-    headerTitleStyle: {
-      fontFamily: fonts.primaryRegular,
-      color: colors.white,
-      fontSize: 18,
-    },
-  },
-  {
-    name: 'Article',
-    component: AvailableInFullVersion,
-    headerLeft: headerLeftComponent,
-    headerBackground: { source: headerBackground },
-    headerTitleStyle: {
-      fontFamily: fonts.primaryRegular,
-      color: colors.white,
-      fontSize: 18,
-    },
-  },
-  {
-    name: 'Chat',
-    component: AvailableInFullVersion,
-    headerLeft: headerLeftComponent,
-    headerBackground: { source: headerBackground },
-    headerTitleStyle: {
-      fontFamily: fonts.primaryRegular,
-      color: colors.white,
-      fontSize: 18,
-    },
-  },
-  {
-    name: 'Messages',
-    component: AvailableInFullVersion,
-    headerLeft: headerLeftComponent,
-    headerBackground: { source: headerBackground },
-    headerTitleStyle: {
-      fontFamily: fonts.primaryRegular,
-      color: colors.white,
-      fontSize: 18,
-    },
-  },
-  {
-    name: 'Auth',
-    component: AvailableInFullVersion,
+    name: 'UserProfile',
+    component: UserProfileScreen,
     headerLeft: headerLeftComponent,
     headerBackground: { source: headerBackground },
     headerTitleStyle: {

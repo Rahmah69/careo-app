@@ -1,13 +1,23 @@
 import * as React from 'react';
-import { Text, View, Image, StyleSheet, Platform } from 'react-native';
+import { Text, View, Image, StyleSheet, Platform, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { colors } from '../../styles';
+import {useSelector} from 'react-redux'
 
+const iconMenu = require('../../../assets/images/tabbar/menubutton.png');
+
+import PagesScreen from '../pages/PagesViewContainer';
 import tabNavigationData from './tabNavigationData';
 
 const Tab = createBottomTabNavigator();
 
-export default function BottomTabs() {
+export default function BottomTabs(props) {
+
+  const openSideMenuBar = () => {
+    console.log(">>> openSideMenuBar")
+    props.navigation.toggleDrawer()
+  }
+
   return (
     <Tab.Navigator tabBarOptions={{
       style: {height: Platform.OS === 'ios' ? 90 : 50},
@@ -28,11 +38,30 @@ export default function BottomTabs() {
                 />
               </View>
             ),
-            // showLabel: false,
-            //  tabBarLabel: ({ focused }) => <Text style={{ fontSize: 12, color: focused ? colors.primary : colors.gray }}>{item.name}</Text>,
           }}
         />        
       ))}
+      <Tab.Screen 
+          key={`tab_item99`}
+          name='menu'
+          component={PagesScreen}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <View style={styles.tabBarItemContainer}>
+                <TouchableOpacity 
+                  onPress={() => {
+                    openSideMenuBar()
+                  }}>
+                <Image
+                  resizeMode="contain"
+                  source={iconMenu}
+                  style={[styles.tabBarIcon, focused && styles.tabBarIconFocused]}
+                />
+                </TouchableOpacity>
+              </View>
+            ),   
+          }}
+        />   
     </Tab.Navigator>
   );
 };

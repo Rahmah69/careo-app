@@ -1,9 +1,8 @@
 import 'react-native-gesture-handler';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createStackNavigator, Header } from '@react-navigation/stack';
 import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 
-import { compose } from 'recompose'
 import { useSelector } from 'react-redux'
 
 import StackNavigationData from './stackNavigationData';
@@ -28,6 +27,7 @@ export default function NavigatorView(props) {
   // }
   // return <AuthScreen />;
 
+  const notificationEnable = useSelector(state => state.app.notificationEnable)
   const headerShown = useSelector(state => state.navigation.headerShown)
 
   const headerLeftComponentMenu = () => {

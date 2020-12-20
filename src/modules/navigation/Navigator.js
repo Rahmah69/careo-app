@@ -9,6 +9,7 @@ import NavigatorView from './RootNavigation';
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsLoggedIn } from '../auth/AuthState';
 import { setGestureEnable, setHeaderShown } from './NavigationState';
+import NotificationListScreen from '../notification/NotificationListScreen';
 
 const iconHome = require('../../../assets/images/drawer/home.png');
 const iconCalendar = require('../../../assets/images/drawer/calendar.png');
@@ -56,7 +57,11 @@ function CustomDrawerContent(props) {
   }
 
   const gotoProfilePage = () => {
+    props.navigation.navigate('UserProfile')
+  }
 
+  const gotoNotiListPage = () => {
+    props.navigation.navigate('Login')
   }
 
   const userInfo = useSelector(state => state.auth.userInfo)
@@ -73,7 +78,9 @@ function CustomDrawerContent(props) {
           <Text style={{ marginTop: 10, color: '#4BC1FD' }}>{userInfo.email}</Text>
         </View>
       </View>
+
       <View style={styles.divider} />
+
       {drawerData.map((item, idx) => (
         <DrawerItem
           key={`drawer_item-${idx+1}`}
@@ -85,7 +92,9 @@ function CustomDrawerContent(props) {
           onPress={() => props.navigation.navigate(item.name)}
         />
       ))}
+
       <View style={styles.divider} />
+
       <DrawerItem
         label={() => (
           <View style={styles.menuLabelFlex}>
