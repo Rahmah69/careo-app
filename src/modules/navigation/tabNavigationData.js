@@ -1,7 +1,7 @@
 import HomeScreen from '../home/HomeViewContainer';
 import CalendarScreen from '../calendar/CalendarViewContainer';
 import ChildListScreen from '../child/ChildListScreen';
-import PagesScreen from '../pages/PagesViewContainer';
+import UserProfileScreen from '../auth/UserProfileScreen';
 import ComponentsScreen from '../components/ComponentsViewContainer';
 
 const iconHome = require('../../../assets/images/tabbar/home0.png');
@@ -28,7 +28,7 @@ const tabNavigationData = [
   },
   {
     name: 'Parent',
-    component: CalendarScreen,
+    component: UserProfileScreen,
     icon: iconParent,
   },
   // {

@@ -17,7 +17,7 @@ import { RadioGroup, GridRow } from '../../components'
 import { addChild, updateChild, removeChild, setSelIndex } from './ChildState'
 import LinearGradient from 'react-native-linear-gradient'
 
-class ChildListScreen extends React.Component {
+class DeviceListScreen extends React.Component {
 
   _openArticle = article => {
     this.props.navigation.navigate('ChildProfileScreen')
@@ -98,7 +98,7 @@ export default compose(
       setSelIndex: (child) => dispatch(setSelIndex(selIndex)),
     }),
   )
-)(ChildListScreen)
+)(DeviceListScreen)
 
 const styles = StyleSheet.create({
   container: {

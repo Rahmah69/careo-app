@@ -193,11 +193,21 @@ export default class Database {
           db.transaction((tx) => {
             // tx.executeSql(`UPDATE user SET name = '${user.name}', email = '${user.email}', phone = '${user.phone}', password = '${user.password}', image_path = '${user.imagePath}' 
             //               WHERE id = ${user.id}`, []).then(([tx, results]) => {
-            tx.executeSql(`UPDATE user SET name = ?, email = ?, phone = ?, password = ?, image_path = ?, updated_at = ? WHERE id = ?`, 
-                            [user.name, user.email, user.phone, user.password, user.imagePath, strCurDateTime, user.id]).then(([tx, results]) => {
-              console.log("update user query completed")
-              resolve(results)
-            })
+            if (user.password != '') {
+              tx.executeSql(`UPDATE user SET name = ?, email = ?, phone = ?, password = ?, image_path = ?, updated_at = ? WHERE id = ?`, 
+                              [user.name, user.email, user.phone, user.password, user.imagePath, strCurDateTime, user.id]).then(([tx, results]) => {
+                console.log("update user query completed")
+                resolve(results)
+              })
+              
+            } else {
+              tx.executeSql(`UPDATE user SET name = ?, email = ?, phone = ?, image_path = ?, updated_at = ? WHERE id = ?`, 
+                              [user.name, user.email, user.phone, user.imagePath, strCurDateTime, user.id]).then(([tx, results]) => {
+                console.log("update user query completed")
+                resolve(results)
+              })
+
+            }
           }).then((result) => {
             this.closeDatabase(db)
 

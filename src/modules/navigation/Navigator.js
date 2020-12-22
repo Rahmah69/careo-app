@@ -1,22 +1,23 @@
-import * as React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import * as React from 'react'
+import { View, Text, StyleSheet, Image } from 'react-native'
 import { 
   createDrawerNavigator,
   DrawerItem,
   DrawerContentScrollView,
-} from '@react-navigation/drawer';
-import NavigatorView from './RootNavigation';
+} from '@react-navigation/drawer'
+import NavigatorView from './RootNavigation'
 import { useSelector, useDispatch } from 'react-redux'
-import { setIsLoggedIn } from '../auth/AuthState';
-import { setGestureEnable, setHeaderShown } from './NavigationState';
-import NotificationListScreen from '../notification/NotificationListScreen';
+import { setIsLoggedIn } from '../auth/AuthState'
+import { setGestureEnable, setHeaderShown } from './NavigationState'
+import NotificationListScreen from '../notification/NotificationListScreen'
 
-const iconHome = require('../../../assets/images/drawer/home.png');
-const iconCalendar = require('../../../assets/images/drawer/calendar.png');
-const iconGrids = require('../../../assets/images/drawer/grids.png');
-const iconPages = require('../../../assets/images/drawer/pages.png');
-const iconComponents = require('../../../assets/images/drawer/components.png');
-const iconSettings = require('../../../assets/images/drawer/settings.png');
+const defaultAvatar = require('../../../assets/images/icons/default-avatar.png')
+const iconHome = require('../../../assets/images/drawer/home.png')
+const iconCalendar = require('../../../assets/images/drawer/calendar.png')
+const iconGrids = require('../../../assets/images/drawer/grids.png')
+const iconPages = require('../../../assets/images/drawer/pages.png')
+const iconComponents = require('../../../assets/images/drawer/components.png')
+const iconSettings = require('../../../assets/images/drawer/settings.png')
 const iconBlog = require('../../../assets/images/drawer/blog.png')
 
 const drawerData = [
@@ -40,9 +41,9 @@ const drawerData = [
     name: 'Terms Of Services',
     icon: iconComponents,
   },
-];
+]
 
-const Drawer = createDrawerNavigator();
+const Drawer = createDrawerNavigator()
 
 function CustomDrawerContent(props) {
 
@@ -57,7 +58,7 @@ function CustomDrawerContent(props) {
   }
 
   const gotoProfilePage = () => {
-    props.navigation.navigate('UserProfile')
+    // props.navigation.navigate('UserProfile')
   }
 
   const gotoNotiListPage = () => {
@@ -71,7 +72,7 @@ function CustomDrawerContent(props) {
       <View style={styles.avatarContainer}>
         <Image
           style={styles.avatar}
-          source={require('../../../assets/images/drawer/user.png')}
+          source={userInfo.imagePath != null && userInfo.imagePath != '' ? {url: userInfo.imagePath} : defaultAvatar}
         />
         <View style={{ paddingLeft: 15 }}>
           <Text style={styles.userName} onPress={() => gotoProfilePage()}>{userInfo.name}</Text>
@@ -104,7 +105,7 @@ function CustomDrawerContent(props) {
         onPress={() => logout()}
       />
     </DrawerContentScrollView>
-  );
+  )
 }
 
 export default function App() {
@@ -124,7 +125,7 @@ export default function App() {
     >
       <Drawer.Screen name="Homes" component={NavigatorView} />
     </Drawer.Navigator>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -168,4 +169,4 @@ const styles = StyleSheet.create({
     margin: 20,
     marginBottom: 10
   },
-});
+})

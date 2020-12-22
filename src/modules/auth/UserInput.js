@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View, TextInput, Image, Dimensions, TouchableOpacity } from "react-native"
-import eyeImg from "../../../assets/images/eye_black.png"
+import eyeImg from "../../../assets/images/icons/eye_black.png"
 
 export default class UserInput extends Component {
   render() {
@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
     marginHorizontal: INPUT_HORZ_MARGIN,
     paddingLeft: INLINE_IMG_HORZ_MARGIN + INLINE_IMG_WIDTH + INLINE_IMG_HORZ_MARGIN,
     borderRadius: 20,
-    color: '#A0A0A0',
+    color: '#505050',
+    fontSize: 18,
   },
   inputWrapper: {
     marginBottom: 10

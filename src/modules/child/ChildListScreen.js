@@ -11,10 +11,11 @@ import {
   Image,
   Dimensions,
 } from 'react-native'
+import LinearGradient from 'react-native-linear-gradient'
 import { colors, fonts } from '../../styles'
 
 import { addChild, updateChild, removeChild, setSelIndex } from './ChildState'
-import LinearGradient from 'react-native-linear-gradient'
+import HeadPanel from '../components/HeadPanel'
 
 class ChildListScreen extends React.Component {
 
@@ -29,7 +30,7 @@ class ChildListScreen extends React.Component {
   _renderItem = ({item, index}) => {
     let {card, cardImageSection, cardImage, cardContentSection, cardTextView, cardTextTitle, cardTextContent} = styles
     return (
-      <TouchableOpacity style={card}>
+      <TouchableOpacity style={card} activeOpacity={.5}>
         <View style={cardImageSection}>
           <Image source={{url: item.imagePath}} style={cardImage}/>
         </View>
@@ -61,9 +62,7 @@ class ChildListScreen extends React.Component {
     let { headerSection, headerText, buttonSection, button, linearGradient, buttonText} = styles
     return (      
       <View style={styles.container}>
-        <View style={headerSection}>
-          <Text style={headerText}>Child List</Text>
-        </View>
+        <HeadPanel title="Child List"/>
 
         <FlatList style={{marginTop: 10}}
           data={this.props.childList}
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: 'row',
     paddingHorizontal: 10,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   cardImageSection: {
     flex:1, 
@@ -173,7 +172,7 @@ const styles = StyleSheet.create({
     flex: 2, 
     textAlign: 'left', 
     fontSize: 13, 
-    color: '#C1CFD8'
+    color: '#515F68'
   },
   buttonSection: {
     height: 50, 

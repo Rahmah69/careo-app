@@ -3,6 +3,7 @@ import moment from "moment"
 
 // Initial state
 const initialState = {
+  // total notifications
   notiList: [
     {
       serialNumber: 'F2155293',
@@ -60,8 +61,25 @@ const initialState = {
       confirmed: 1,
       childName: 'Milian'
     },
+    {
+      serialNumber: 'F2155293',
+      battery: 90,
+      time: moment().add(-2, 'months').format('YYYY-MM-DD hh:mm:ss'),
+      content: 'Cleaning',
+      confirmed: 1,
+      childName: 'Milian'
+    },
+    {
+      serialNumber: 'F2155293',
+      battery: 90,
+      time: moment().add(-1, 'years').format('YYYY-MM-DD hh:mm:ss'),
+      content: 'Cleaning',
+      confirmed: 1,
+      childName: 'Milian'
+    },
   ],
-  
+
+  // last notifications
   lastNotiList: [
     {
       serialNumber: 'F2155293',

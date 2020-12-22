@@ -1,15 +1,16 @@
-import * as React from 'react';
-import { Text, View, Image, StyleSheet, Platform, TouchableOpacity } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { colors } from '../../styles';
+import * as React from 'react'
+import { Text, View, Image, StyleSheet, Platform, TouchableOpacity } from 'react-native'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { colors } from '../../styles'
 import {useSelector} from 'react-redux'
 
-const iconMenu = require('../../../assets/images/tabbar/menubutton.png');
+const iconMenu = require('../../../assets/images/tabbar/menubutton.png')
 
-import PagesScreen from '../pages/PagesViewContainer';
-import tabNavigationData from './tabNavigationData';
+import {BOTTOM_TAB_HEIGHT} from '../Constant'
+import PagesScreen from '../pages/PagesViewContainer'
+import tabNavigationData from './tabNavigationData'
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator()
 
 export default function BottomTabs(props) {
 
@@ -20,7 +21,7 @@ export default function BottomTabs(props) {
 
   return (
     <Tab.Navigator tabBarOptions={{
-      style: {height: Platform.OS === 'ios' ? 90 : 50},
+      style: {height: BOTTOM_TAB_HEIGHT},
       showLabel: false,
       }}>
       {tabNavigationData.map((item, idx) => (
@@ -63,8 +64,8 @@ export default function BottomTabs(props) {
           }}
         />   
     </Tab.Navigator>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   tabBarItemContainer: {
@@ -82,4 +83,4 @@ const styles = StyleSheet.create({
   tabBarIconFocused: {
     tintColor: colors.primary,
   },
-});
+})

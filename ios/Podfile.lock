@@ -190,6 +190,8 @@ PODS:
   - React-jsinspector (0.63.4)
   - react-native-check-notification-enable (1.3.0):
     - React
+  - react-native-image-picker (3.1.2):
+    - React
   - react-native-network-info (5.2.1):
     - React
   - react-native-safe-area-context (0.7.3):
@@ -303,6 +305,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-check-notification-enable (from `../node_modules/react-native-check-notification-enable`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-network-info (from `../node_modules/react-native-network-info`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-sqlite-storage (from `../node_modules/react-native-sqlite-storage`)
@@ -370,6 +373,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-check-notification-enable:
     :path: "../node_modules/react-native-check-notification-enable"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-network-info:
     :path: "../node_modules/react-native-network-info"
   react-native-safe-area-context:
@@ -443,6 +448,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-check-notification-enable: d47fd8eaf26f9da6ff82eebd94562afdf3a1916a
+  react-native-image-picker: a2b7ee36dabe1e511dab6fb79918633a4fd3d7ce
   react-native-network-info: d1290ffc0bd0709e11436f5b8d7f605dcc5c4530
   react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
   react-native-sqlite-storage: 418ef4afc5e6df6ce3574c4617e5f0b65cffde55

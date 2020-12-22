@@ -13,7 +13,7 @@ import { colors, fonts } from '../../styles';
 
 import { RadioGroup, GridRow } from '../../components';
 
-export default class ChildProfileScreen extends React.Component {
+export default class DeviceSettingScreen extends React.Component {
 
   onAdd = () => {
 
@@ -48,7 +48,7 @@ export default compose(
       removeChild: (childId) => dispatch(removeChild(childId)),
     }),
   )
-)(ChildProfileScreen)
+)(DeviceSettingScreen)
 
 const styles = StyleSheet.create({
   container: {

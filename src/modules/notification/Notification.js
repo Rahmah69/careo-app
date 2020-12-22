@@ -9,13 +9,13 @@ import {
 import {getTimeDiffString} from '../Functions'
 
 import { Text } from '../../components/StyledText'
-import sleepingImg from "../../../assets/images/sleeping.png"
-import eatingImg from "../../../assets/images/eating.png"
-import cleaningImg from "../../../assets/images/cleaning.png"
-import batteryImg from "../../../assets/images/battery.png"
-import braceletImg from "../../../assets/images/bracelet.png"
-import checkedImg from "../../../assets/images/checked.png"
-import unCheckedImg from "../../../assets/images/unchecked.png"
+import sleepingImg from "../../../assets/images/icons/sleeping.png"
+import eatingImg from "../../../assets/images/icons/eating.png"
+import cleaningImg from "../../../assets/images/icons/cleaning.png"
+import batteryImg from "../../../assets/images/icons/battery.png"
+import braceletImg from "../../../assets/images/icons/bracelet.png"
+import checkedImg from "../../../assets/images/icons/checked.png"
+import unCheckedImg from "../../../assets/images/icons/unchecked.png"
 
 import {EATING_MSG, SLEEPING_MSG, CLEANING_MSG} from "../Constant"
 

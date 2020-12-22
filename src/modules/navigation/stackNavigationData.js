@@ -7,7 +7,8 @@ import LoginScreen from '../auth/LoginScreen'
 import RegisterScreen from '../auth/RegisterScreen'
 import TabNavigator from './MainTabNavigator'
 import NotificationListScreen from '../notification/NotificationListScreen'
-import ChildListScreen from '../child/ChildListScreen';
+import ChildListScreen from '../child/ChildListScreen'
+import UserProfileScreen from '../auth/UserProfileScreen'
 
 // import ProfileScreen from '../profile/ProfileViewContainer'
 // import ArticleScreen from '../article/ArticleViewContainer'
@@ -17,7 +18,6 @@ import ChildListScreen from '../child/ChildListScreen';
 // import AuthScreen from '../auth/AuthViewContainer'
 
 import { colors, fonts } from '../../styles'
-import UserProfileScreen from '../auth/UserProfileScreen'
 
 const headerLeftComponent = (props) => {
   return (
@@ -29,7 +29,7 @@ const headerLeftComponent = (props) => {
       }}
     >
       <Image
-        source={require('../../../assets/images/icons/arrow-back.png')}
+        source={require('../../../assets/images/icons/toback.png')}
         resizeMode="contain"
         style={{
           height: 20,

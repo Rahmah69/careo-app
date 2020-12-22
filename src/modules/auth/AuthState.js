@@ -10,27 +10,23 @@ const SET_IS_LOGGED_IN = 'SET_IS_LOGGED_IN'
 
 // Action creators
 function setUserAction(userInfo) {
-  console.log(`>>> set user action: ${JSON.stringify(userInfo)}`)
   return { type: SET_USER , userInfo}
 }
 
 function setIsLoggedInAction(isLoggedIn) {
-  console.log(`>>> set is logged in action: ${JSON.stringify(isLoggedIn)}`)
   return { type: SET_IS_LOGGED_IN , isLoggedIn}
 }
 
 export function setUser(userInfo) {
   return dispatch => {
-    console.log(`>>> save user: ${JSON.stringify(userInfo)}`)
     dispatch(setUserAction(userInfo))
   };
 }
 
 export function setIsLoggedIn(isLoggedIn) {
   return dispatch => {
-    console.log(`>>> set is logged in: ${JSON.stringify(isLoggedIn)}`)
     dispatch(setIsLoggedInAction(isLoggedIn))
-  };
+  }
 }
 
 // Reducer

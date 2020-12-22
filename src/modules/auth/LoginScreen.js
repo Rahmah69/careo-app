@@ -7,8 +7,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import LinearGradient from 'react-native-linear-gradient'
 
 import UserInput from './UserInput'
-import usernameImg from '../../../assets/images/username.png'
-import passwordImg from '../../../assets/images/password.png'
+import usernameImg from '../../../assets/images/icons/username.png'
+import passwordImg from '../../../assets/images/icons/password.png'
 import { setUser, setIsLoggedIn } from './AuthState'
 import {DEVICE_WIDTH, DB_USERS_KEY} from '../Constant'
 import {authStyles as styles} from '../../styles/authStyles'

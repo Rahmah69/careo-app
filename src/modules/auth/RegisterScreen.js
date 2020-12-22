@@ -8,8 +8,8 @@ import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import UserInput from './UserInput'
-import usernameImg from '../../../assets/images/username.png'
-import passwordImg from '../../../assets/images/password.png'
+import usernameImg from '../../../assets/images/icons/username.png'
+import passwordImg from '../../../assets/images/icons/password.png'
 import { setUser, setUsers } from './AuthState'
 import { PRIVACY_POLICY_URL, TERM_SERVICE_URL, DEVICE_WIDTH, DB_USERS_KEY} from '../Constant'
 import {authStyles as styles} from '../../styles/authStyles'
@@ -36,14 +36,14 @@ class RegisterScreen extends Component {
       : this.setState({showPass: true, press: false})
   }
 
-  onChangeUsername = (email) => {
+  onChangeEmail = (email) => {
     console.log("onchange email:", email)
     let userInfo = this.state.userInfo
     userInfo.email = email
     this.setState({userInfo: userInfo})
   }
 
-  onChangeUserId = (name) => {
+  onChangeUserName = (name) => {
     console.log("onchange user:", name)
     let userInfo = this.state.userInfo
     userInfo.name = name
@@ -203,7 +203,7 @@ class RegisterScreen extends Component {
               returnKeyType={'done'}
               autoCorrect={false}
               eyeicon={false}
-              onChangeText = {(name) => this.onChangeUserId(name)}
+              onChangeText = {(name) => this.onChangeUserName(name)}
               value={this.state.userInfo.name}
             />
             <UserInput
@@ -213,7 +213,7 @@ class RegisterScreen extends Component {
               returnKeyType={'done'}
               autoCorrect={false}
               eyeicon={false}
-              onChangeText = {(email) => this.onChangeUsername(email)}
+              onChangeText = {(email) => this.onChangeEmail(email)}
               value={this.state.userInfo.email}
             />
             <UserInput
@@ -246,7 +246,7 @@ class RegisterScreen extends Component {
               autoCapitalize={'none'}
               onChangeText = {(confirm) => this.onChangeConfirm(confirm)}
               autoCorrect={false}
-              value={this.state.userInfo.confirm}
+              value={this.state.confirm}
             />
             <View style={{width: (DEVICE_WIDTH - 40), ustifyContent:'center'}}>
               <TouchableOpacity
@@ -302,11 +302,9 @@ export default compose(
   connect(
     state => ({
       userInfo: state.auth.userInfo,
-      users: state.auth.users
     }),
     dispatch => ({
-      setUser: (userInfo) => dispatch(setUser(userInfo)),
-      setUsers: (users) => dispatch(setUsers(users))
+      setUser: (userInfo) => dispatch(setUser(userInfo))
     }),
   )
 ) (RegisterScreen)

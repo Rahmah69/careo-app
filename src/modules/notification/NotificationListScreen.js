@@ -10,33 +10,21 @@ import {
   ScrollView
 } from 'react-native'
 import { colors, fonts } from '../../styles'
-import {headStyles} from '../../styles/headStyles'
+import HeadPanel from '../components/HeadPanel'
 
 import Notification from './Notification'
 
 class NotificationListScreen extends React.Component {
 
   render() {
-    let {headerSection, headerDisplaySection, headerText, backButton} = headStyles
     let { container, notificationSection, divider} = styles
     return (      
       <View style={container}>
-        <View style={headerSection}>
-          <View style={headerDisplaySection}>
-            <TouchableOpacity
-              flex={1}
-              style={{marginLeft: 20, width: 10}}
-              onPress={() => this.props.navigation.goBack()}
-              activeOpacity={1}
-            >
-              <Text style={backButton}>{"<"}</Text>
-            </TouchableOpacity>
-            <Text flex={5} style={headerText}>Notification History</Text>
-            <Text flex={1} style={headerText}></Text>
-          </View>
-        </View>
-        
-        <ScrollView style={{marginHorizontal: 20, marginTop: 10}}>
+        <HeadPanel
+          title="Notification History"
+          onPress={() => this.props.navigation.goBack()}/>
+
+        <ScrollView style={{marginHorizontal: 20, marginVertical: 10}}>
           {
           this.props.notiList.map((item, index) => {
             console.log(">>>> notification map - item: ", item)
@@ -82,5 +70,5 @@ const styles = StyleSheet.create({
     opacity: 0.2,
     borderBottomWidth: 1,
     marginHorizontal: 1,
-  }
+  },
 })
