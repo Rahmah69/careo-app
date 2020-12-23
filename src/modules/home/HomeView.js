@@ -16,7 +16,7 @@ import {DEVICE_HEIGHT} from '../Constant'
 import {db} from '../Database'
 import LastNotificationList from './LastNotificationList'
 
-export default function HomeScreen({ isExtended, setIsExtended }) {
+export default function HomeScreen(/*{ isExtended, setIsExtended }*/) {
   
   const userInfo = useSelector(state => state.auth.userInfo)
 

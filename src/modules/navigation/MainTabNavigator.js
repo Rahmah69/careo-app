@@ -9,6 +9,7 @@ const iconMenu = require('../../../assets/images/tabbar/menubutton.png')
 import {BOTTOM_TAB_HEIGHT} from '../Constant'
 import PagesScreen from '../pages/PagesViewContainer'
 import tabNavigationData from './tabNavigationData'
+import UserProfileScreen from '../auth/UserProfileScreen'
 
 const Tab = createBottomTabNavigator()
 
@@ -45,7 +46,7 @@ export default function BottomTabs(props) {
       <Tab.Screen 
           key={`tab_item99`}
           name='menu'
-          component={PagesScreen}
+          component={UserProfileScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <View style={styles.tabBarItemContainer}>

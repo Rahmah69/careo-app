@@ -6,14 +6,16 @@ const initialState = {
   // total notifications
   notiList: [
     {
-      serialNumber: 'F2155293',
+      uuid: '1234-2313-5323',
+      serialNumber: 'A2345293',
       battery: 90,
       time: moment().add(-10, 'seconds').format('YYYY-MM-DD hh:mm:ss'),
       content: 'Eating',
       confirmed: 1,
-      childName: 'Milian'
+      childName: ''
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-1, 'minutes').format('YYYY-MM-DD hh:mm:ss'),
@@ -22,14 +24,16 @@ const initialState = {
       childName: 'Milian'
     },
     {
-      serialNumber: 'F2155293',
+      uuid: '1234-2313-5323',
+      serialNumber: 'BIER123',
       battery: 90,
       time: moment().add(-5, 'minutes').format('YYYY-MM-DD hh:mm:ss'),
       content: 'Sleeping',
       confirmed: 1,
-      childName: 'Milian'
+      childName: ''
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-2, 'hours').format('YYYY-MM-DD hh:mm:ss'),
@@ -38,22 +42,25 @@ const initialState = {
       childName: 'Milian'
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 80,
       time: moment().add(-5, 'days').format('YYYY-MM-DD hh:mm:ss'),
       content: 'Eating',
       confirmed: 1,
-      childName: 'Milian'
+      childName: ''
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-2, 'months').format('YYYY-MM-DD hh:mm:ss'),
       content: 'Cleaning',
       confirmed: 1,
-      childName: 'Milian'
+      childName: ''
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-1, 'years').format('YYYY-MM-DD hh:mm:ss'),
@@ -62,6 +69,7 @@ const initialState = {
       childName: 'Milian'
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-2, 'months').format('YYYY-MM-DD hh:mm:ss'),
@@ -70,6 +78,7 @@ const initialState = {
       childName: 'Milian'
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-1, 'years').format('YYYY-MM-DD hh:mm:ss'),
@@ -82,6 +91,7 @@ const initialState = {
   // last notifications
   lastNotiList: [
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-10, 'seconds').format('YYYY-MM-DD hh:mm:ss'),
@@ -90,14 +100,16 @@ const initialState = {
       childName: 'Milian'
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-1, 'minutes').format('YYYY-MM-DD hh:mm:ss'),
       content: 'Cleaning',
       confirmed: 0,
-      childName: 'Milian'
+      childName: ''
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-5, 'minutes').format('YYYY-MM-DD hh:mm:ss'),
@@ -106,14 +118,16 @@ const initialState = {
       childName: 'Milian'
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-2, 'hours').format('YYYY-MM-DD hh:mm:ss'),
       content: 'Sleeping',
       confirmed: 0,
-      childName: 'Milian'
+      childName: ''
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 80,
       time: moment().add(-5, 'days').format('YYYY-MM-DD hh:mm:ss'),
@@ -122,20 +136,22 @@ const initialState = {
       childName: 'Milian'
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-2, 'months').format('YYYY-MM-DD hh:mm:ss'),
       content: 'Cleaning',
       confirmed: 1,
-      childName: 'Milian'
+      childName: ''
     },
     {
+      uuid: '1234-2313-5323',
       serialNumber: 'F2155293',
       battery: 90,
       time: moment().add(-1, 'years').format('YYYY-MM-DD hh:mm:ss'),
       content: 'Cleaning',
       confirmed: 1,
-      childName: 'Milian'
+      childName: ''
     },
   ],
 }

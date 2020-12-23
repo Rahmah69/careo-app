@@ -16,6 +16,7 @@ import { colors, fonts } from '../../styles'
 
 import { addChild, updateChild, removeChild, setSelIndex } from './ChildState'
 import HeadPanel from '../components/HeadPanel'
+import {CHILD_PROFILE_PAGE_NAME} from '../navigation/stackNavigationData'
 
 class ChildListScreen extends React.Component {
 
@@ -23,14 +24,20 @@ class ChildListScreen extends React.Component {
     console.log(">>> Child List Screen Did Mount")
   }
 
-  _openArticle = article => {
-    this.props.navigation.navigate('ChildProfileScreen')
-  }  
+  onAdd = () => {
+    this.props.setSelIndex(-1)
+    this.props.navigation.navigate(CHILD_PROFILE_PAGE_NAME)
+  }
+
+  onItemView = (index) => {
+    this.props.setSelIndex(index)
+    this.props.navigation.navigate(CHILD_PROFILE_PAGE_NAME)
+  }
 
   _renderItem = ({item, index}) => {
     let {card, cardImageSection, cardImage, cardContentSection, cardTextView, cardTextTitle, cardTextContent} = styles
     return (
-      <TouchableOpacity style={card} activeOpacity={.5}>
+      <TouchableOpacity style={card} activeOpacity={.5} onPress={() => this.onItemView(index)}>
         <View style={cardImageSection}>
           <Image source={{url: item.imagePath}} style={cardImage}/>
         </View>
@@ -54,10 +61,6 @@ class ChildListScreen extends React.Component {
     )
   }
 
-  onAdd = () => {
-
-  }
-
   render() {
     let { headerSection, headerText, buttonSection, button, linearGradient, buttonText} = styles
     return (      
@@ -74,7 +77,7 @@ class ChildListScreen extends React.Component {
           <TouchableOpacity
             style={button}
             onPress={() => this.onAdd()}
-            activeOpacity={1}
+            activeOpacity={0.5}
           >
             <LinearGradient
               colors={[ '#6FDE99', '#28A49B' ]}
@@ -97,7 +100,7 @@ export default compose(
       childList: state.child.childList
     }),
     dispatch => ({
-      setSelIndex: (child) => dispatch(setSelIndex(selIndex)),
+      setSelIndex: (selIndex) => dispatch(setSelIndex(selIndex)),
     }),
   )
 )(ChildListScreen)

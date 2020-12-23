@@ -3,6 +3,7 @@ import CalendarScreen from '../calendar/CalendarViewContainer';
 import ChildListScreen from '../child/ChildListScreen';
 import UserProfileScreen from '../auth/UserProfileScreen';
 import ComponentsScreen from '../components/ComponentsViewContainer';
+import {ChildNavigatorView} from './RootNavigation'
 
 const iconHome = require('../../../assets/images/tabbar/home0.png');
 const iconChildren = require('../../../assets/images/tabbar/children.png');
@@ -18,7 +19,7 @@ const tabNavigationData = [
   },
   {
     name: 'Children',
-    component: ChildListScreen,
+    component: ChildNavigatorView,
     icon: iconChildren,
   },
   {
@@ -31,11 +32,6 @@ const tabNavigationData = [
     component: UserProfileScreen,
     icon: iconParent,
   },
-  // {
-  //   name: 'Menu',
-  //   component: CalendarScreen,
-  //   icon: iconMenu,
-  // },
 ];
 
 export default tabNavigationData;

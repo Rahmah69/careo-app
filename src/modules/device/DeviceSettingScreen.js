@@ -1,4 +1,6 @@
-import React from 'react';
+import React from 'react'
+import { connect } from 'react-redux'
+import { compose } from 'recompose'
 import {
   StyleSheet,
   View,
@@ -8,12 +10,12 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-} from 'react-native';
-import { colors, fonts } from '../../styles';
+} from 'react-native'
+import { colors, fonts } from '../../styles'
 
-import { RadioGroup, GridRow } from '../../components';
+import { RadioGroup, GridRow } from '../../components'
 
-export default class DeviceSettingScreen extends React.Component {
+class DeviceSettingScreen extends React.Component {
 
   onAdd = () => {
 
@@ -32,7 +34,7 @@ export default class DeviceSettingScreen extends React.Component {
       <View style={styles.container}>
         
       </View>
-    );
+    )
   }
 }
 
@@ -191,4 +193,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-});
+})

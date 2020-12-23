@@ -28,16 +28,19 @@ export default class Database {
                 db = DB
                 console.log("Database OPEN")
 
-                // db.transaction((tx) => {
-                //   tx.executeSql('DROP TABLE user')
-                //   tx.executeSql('DROP TABLE child')
-                //   tx.executeSql('DROP TABLE device')
-                //   tx.executeSql('DROP TABLE notification')
-                // })
+                db.transaction((tx) => {
+                  // tx.executeSql('DROP TABLE user')
+                  // tx.executeSql('DROP TABLE child')
+                  // tx.executeSql('DROP TABLE device')
+                  // tx.executeSql('DROP TABLE notification')
+                })
 
+                // return
+
+                db.executeSql('UPDATE user SET password="a" WHERE email="a"')
 
                 // check if user table exists, if not, create user table
-                db.executeSql('SELECT 1 FROM user LIMIT 1').then(() => {
+                db.executeSql('SELECT 1 FROM child LIMIT 1').then(() => {
                     console.log("Database is ready ... executing query ...")
                     resolve(db)
                 }).catch((error) =>{
@@ -60,23 +63,25 @@ export default class Database {
                                                                         condition VARCHAR NOT NULL, 
                                                                         relationship VARCHAR NOT NULL, 
                                                                         image_path VARCHAR, 
-                                                                        serial_number VARCHAR, 
+                                                                        uuid VARCHAR, 
                                                                         user_id INTEGER NOT NULL, 
                                                                         created_at VARCHAR NOT NULL, 
                                                                         updated_at VARCHAR NOT NULL)`)
-                        tx.executeSql(`CREATE TABLE IF NOT EXISTS device (serial_number VARCHAR PRIMARY KEY NOT NULL, 
-                                                                        battery INTEGER NOT NULL, 
+                        tx.executeSql(`CREATE TABLE IF NOT EXISTS device (uuid VARCHAR PRIMARY KEY NOT NULL, 
+                                                                        serial_number VARCHAR, 
+                                                                        battery INTEGER, 
                                                                         last_sync_time VARCHAR, 
                                                                         is_connected INT NOT NULL,
                                                                         user_id INTEGER NOT NULL, 
                                                                         created_at VARCHAR NOT NULL, 
                                                                         updated_at VARCHAR NOT NULL)`)
-                        tx.executeSql(`CREATE TABLE IF NOT EXISTS notification (serial_number VARCHAR NOT NULL, 
+                        tx.executeSql(`CREATE TABLE IF NOT EXISTS notification (uuid VARCHAR NOT NULL, 
+                                                                        serial_number VARCHAR, 
                                                                         battery INTEGER, 
                                                                         time VARCHAR NOT NULL, 
                                                                         content VARCHAR, 
                                                                         confirmed INTEGER NOT NULL, 
-                                                                        child_id INTEGER,  
+                                                                        child_name INTEGER,  
                                                                         user_id INTEGER NOT NULL, 
                                                                         created_at VARCHAR NOT NULL, 
                                                                         updated_at VARCHAR NOT NULL)`)
@@ -245,16 +250,18 @@ export default class Database {
         const childs = []
         this.initDB().then((db) => {
           db.transaction((tx) => {
-            tx.executeSql(`SELECT id, name, age, blood_type AS bloodType, condition, relationship, image_path AS imagePath, serial_number as serialNumber 
-                          FROM child WHERE user_id = ?`, [userId]).then(([tx, results]) => {
+            tx.executeSql(`SELECT t1.id, t1.name, t1.age, t1.blood_type AS bloodType, t1.condition, t1.relationship, t1.image_path AS imagePath, t1.uuid, t2.serial_number as serialNumber 
+                          FROM child t1 
+                          LEFT JOIN device t2 ON t1.uuid = t2.uuid
+                          WHERE t1.user_id = ?`, [userId]).then(([tx, results]) => {
               console.log("list child query completed")
               
               var len = results.rows.length
               for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i)
-                console.log(`Child Id: ${row.id}, Child Name: ${row.name}, Age: ${row.age}, Blood Type: ${row.bloodType}, Condition: ${row.condition}, Relationship: ${row.relationship}, Image Path: ${row.imagePath}, Serial Number: ${row.serialNumber} `)
-                const { id, name, age, bloodType, condition, relationship, imagePath, serialNumber } = row
-                childs.push({ id, name, age, bloodType, condition, relationship, imagePath, serialNumber })
+                console.log(`Child Id: ${row.id}, Child Name: ${row.name}, Age: ${row.age}, Blood Type: ${row.bloodType}, Condition: ${row.condition}, Relationship: ${row.relationship}, Image Path: ${row.imagePath}, UUID: ${row.uuid}, Serial Number: ${row.serialNumber} `)
+                const { id, name, age, bloodType, condition, relationship, imagePath, uuid, serialNumber } = row
+                childs.push({ id, name, age, bloodType, condition, relationship, imagePath, uuid, serialNumber })
               }
 
               console.log(childs)
@@ -309,8 +316,8 @@ export default class Database {
 
           let strCurDateTime = this.getCurrentDateTimeString()
           db.transaction((tx) => {
-            tx.executeSql(`INSERT INTO child (name, age, blood_type, condition, relationship, image_path, serial_number, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
-                          [child.name, child.age, child.bloodType, child.condition, child.relationship, child.imagePath, child.serialNumber, child.userId, strCurDateTime, strCurDateTime]).then(([tx, results]) => {
+            tx.executeSql(`INSERT INTO child (name, age, blood_type, condition, relationship, image_path, uuid, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
+                          [child.name, child.age, child.bloodType, child.condition, child.relationship, child.imagePath, child.uuid, child.userId, strCurDateTime, strCurDateTime]).then(([tx, results]) => {
               console.log(">>> insert child query completed")
               resolve(results)
             })
@@ -332,8 +339,8 @@ export default class Database {
 
           let strCurDateTime = this.getCurrentDateTimeString()
           db.transaction((tx) => {
-            tx.executeSql(`UPDATE child SET name = ?, age = ?, blood_type = ?, condition = ?, relationship = ?, image_path = ?, serial_number = ?, updated_at = ? WHERE id = ?`, 
-                            [child.name, child.age, child.bloodType, child.condition, child.relationship, child.imagePath, child.serialNumber, strCurDateTime, child.id]).then(([tx, results]) => {
+            tx.executeSql(`UPDATE child SET name = ?, age = ?, blood_type = ?, condition = ?, relationship = ?, image_path = ?, uuid = ?, updated_at = ? WHERE id = ?`, 
+                            [child.name, child.age, child.bloodType, child.condition, child.relationship, child.imagePath, child.uuid, strCurDateTime, child.id]).then(([tx, results]) => {
               console.log("update child query completed")
               resolve(results)
             })
@@ -374,15 +381,46 @@ export default class Database {
         const devices = []
         this.initDB().then((db) => {
           db.transaction((tx) => {
-            tx.executeSql(`SELECT serial_number AS serialNumber, battery, last_sync_time AS lastSyncTime, is_connected FROM device WHERE user_id = ?`, [userId]).then(([tx, results]) => {
+            tx.executeSql(`SELECT uuid, serial_number AS serialNumber, battery, last_sync_time AS lastSyncTime, is_connected AS isConnected FROM device WHERE user_id = ?`, [userId]).then(([tx, results]) => {
               console.log("list device query completed")
               
               var len = results.rows.length
               for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i)
-                console.log(`Serial Number: ${row.serialNumber}, Battery: ${row.battery}, Last Sync Time: ${row.lastSyncTime}`)
-                const { serialNumber, battery, lastSyncTime } = row
-                devices.push({ serialNumber, battery, lastSyncTime })
+                console.log(`UUID: ${row.uuid}, Serial Number: ${row.serialNumber}, Battery: ${row.battery}, Last Sync Time: ${row.lastSyncTime}, IsConnected: ${row.isConnected}`)
+                const { uuid, serialNumber, battery, lastSyncTime, isConnected } = row
+                devices.push({ uuid, serialNumber, battery, lastSyncTime, isConnected })
+              }
+
+              console.log(devices)
+              resolve(devices)
+            })
+          }).then((result) => {
+            this.closeDatabase(db)
+            
+          }).catch((err) => {
+            console.log(err)
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      })  
+    }
+
+    getDeviceIDList(userId) {
+      return new Promise((resolve) => {
+        const devices = []
+        this.initDB().then((db) => {
+          db.transaction((tx) => {
+            tx.executeSql(`SELECT uuid, serial_number AS serialNumber FROM device WHERE user_id = ?`, [userId]).then(([tx, results]) => {
+              console.log("list device query completed")
+              
+              var len = results.rows.length
+              for (let i = 0; i < len; i++) {
+                let row = results.rows.item(i)
+                console.log(`UUID: ${row.uuid}, Serial Number: ${row.serialNumber}`)
+                const { uuid, serialNumber } = row
+                devices.push({ uuid, serialNumber })
               }
 
               console.log(devices)
@@ -406,8 +444,8 @@ export default class Database {
 
           let strCurDateTime = this.getCurrentDateTimeString()
           db.transaction((tx) => {
-            tx.executeSql(`INSERT INTO device (serial_number, battery, last_sync_time, is_connected, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`, 
-                          [device.serialNumber, device.battery, device.lastSyncTime, false, device.userId,  strCurDateTime, strCurDateTime]).then(([tx, results]) => {
+            tx.executeSql(`INSERT INTO device (uuid, serial_number, battery, last_sync_time, is_connected, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
+                          [device.uuid, device.serialNumber, device.battery, device.lastSyncTime, true, device.userId,  strCurDateTime, strCurDateTime]).then(([tx, results]) => {
               console.log(">>> insert device query completed")
               resolve(results)
             })
@@ -430,8 +468,8 @@ export default class Database {
 
           let strCurDateTime = this.getCurrentDateTimeString()
           db.transaction((tx) => {
-            tx.executeSql(`UPDATE device SET serial_number = ?, battery = ?, last_sync_time = ?, is_connected = ?, updated_at = ? WHERE id = ?`, 
-                            [device.serialNumber, device.battery, device.lastSyncTime, device.is_connected, strCurDateTime, device.id]).then(([tx, results]) => {
+            tx.executeSql(`UPDATE device SET serial_number = ?, battery = ?, last_sync_time = ?, is_connected = ?, updated_at = ? WHERE uuid = ?`, 
+                            [device.serialNumber, device.battery, device.lastSyncTime, device.isConnected, strCurDateTime, device.uuid]).then(([tx, results]) => {
               console.log("update device query completed")
               resolve(results)
             })
@@ -447,12 +485,14 @@ export default class Database {
       })  
     }
 
-    deleteDevice(deviceId) {
+    deleteDevice(uuid) {
       return new Promise((resolve) => {
         const users = []
         this.initDB().then((db) => {
           db.transaction((tx) => {
-            tx.executeSql(`DELETE FROM device WHERE id = ?`, [deviceId]).then(([tx, results]) => {
+            tx.executeSql(`UPDATE child SET uuid = "" WHERE uuid = ?`, [uuid])
+
+            tx.executeSql(`DELETE FROM device WHERE uuid = ?`, [uuid]).then(([tx, results]) => {
               console.log("delete device query completed")
               resolve(results)
             })
@@ -473,18 +513,17 @@ export default class Database {
         const notifications = []
         this.initDB().then((db) => {
           db.transaction((tx) => {
-            tx.executeSql(`SELECT t1.serial_number AS serialNumber, t1.battery, t1.time, t1.content, t1.confirmed, t2.name AS childName 
-                          FROM notification t1
-                          LEFT JOIN child t2 ON t1.child_id = t2.id
+            tx.executeSql(`SELECT uuid, serial_number AS serialNumber, battery, time, content, confirmed, child_name AS childName 
+                          FROM notification
                           WHERE user_id = ?`, [userId]).then(([tx, results]) => {
               console.log("list notification query completed")
               
               var len = results.rows.length
               for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i)
-                console.log(`Serial Number: ${row.serialNumber}, Battery: ${row.battery}, Time: ${row.time}, content: ${row.content}, confirmed: ${row.confirmed}, Child Name: ${row.childName}`)
-                const { serialNumber, battery, time, content, confirmed, childName } = row
-                notifications.push({ serialNumber, battery, time, content, confirmed, childName })
+                console.log(`UUID: ${row.uuid}, Serial Number: ${row.serialNumber}, Battery: ${row.battery}, Time: ${row.time}, content: ${row.content}, confirmed: ${row.confirmed}, Child Name: ${row.childName}`)
+                const { uuid, serialNumber, battery, time, content, confirmed, childName } = row
+                notifications.push({ uuid, serialNumber, battery, time, content, confirmed, childName })
               }
 
               console.log(notifications)
@@ -508,8 +547,8 @@ export default class Database {
 
           let strCurDateTime = this.getCurrentDateTimeString()
           db.transaction((tx) => {
-            tx.executeSql(`INSERT INTO notification (serial_number, battery, time, content, confirmed, child_id, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
-                          [notification.serialNumber, notification.battery, notification.time, notification.content, notification.confirmed, notification.childId, device.userId,  strCurDateTime, strCurDateTime]).then(([tx, results]) => {
+            tx.executeSql(`INSERT INTO notification (uuid, serial_number, battery, time, content, confirmed, child_name, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, 
+                          [notification.uuid, notification.serialNumber, notification.battery, notification.time, notification.content, notification.confirmed, notification.childName, device.userId,  strCurDateTime, strCurDateTime]).then(([tx, results]) => {
               console.log(">>> insert notification query completed")
               resolve(results)
             })
@@ -550,10 +589,9 @@ export default class Database {
         const notifications = []
         this.initDB().then((db) => {
           db.transaction((tx) => {
-            tx.executeSql(`SELECT t1.serial_number AS serialNumber, t1.battery, t1.time, t1.content, t1.confirmed, t2.name AS childName 
-                          FROM notification t1, device t3 
-                          LEFT JOIN child t2 ON t1.child_id = t2.id
-                          WHERE t1.serial_number = t3.serial_number AND t3.is_connected = 1
+            tx.executeSql(`SELECT t1.uuid, t1.serial_number AS serialNumber, t1.battery, t1.time, t1.content, t1.confirmed, t1.child_name AS childName 
+                          FROM notification t1, device t2 
+                          WHERE t1.uuid = t2.uuid AND t2.is_connected = 1
                           ORDER BY time DESC
                           LIMIT 3`, []).then(([tx, results]) => {
               console.log("last notifications query completed")
@@ -561,9 +599,9 @@ export default class Database {
               var len = results.rows.length
               for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i)
-                console.log(`Serial Number: ${row.serialNumber}, Battery: ${row.battery}, Time: ${row.time}, content: ${row.content}, confirmed: ${row.confirmed}, Child Name: ${row.childName}`)
-                const { serialNumber, battery, time, content, confirmed, childName } = row
-                notifications.push({ serialNumber, battery, time, content, confirmed, childName })
+                console.log(`UUID: ${row.uuid}, Serial Number: ${row.serialNumber}, Battery: ${row.battery}, Time: ${row.time}, content: ${row.content}, confirmed: ${row.confirmed}, Child Name: ${row.childName}`)
+                const { uuid, serialNumber, battery, time, content, confirmed, childName } = row
+                notifications.push({ uuid, serialNumber, battery, time, content, confirmed, childName })
               }
 
               console.log(notifications)
@@ -586,20 +624,19 @@ export default class Database {
         const notifications = []
         this.initDB().then((db) => {
           db.transaction((tx) => {
-            tx.executeSql(`SELECT t1.serial_number AS serialNumber, t1.battery, t1.time, t1.content, t1.confirmed, t2.name AS childName 
+            tx.executeSql(`SELECT t1.uuid, t1.serial_number AS serialNumber, t1.battery, t1.time, t1.content, t1.confirmed, t1.child_name AS childName 
                           FROM notification t1, 
-                            (SELECT serial_number, max(time) AS recent_time FROM notification GROUP BY serial_number) t3 
-                          LEFT JOIN child t2 ON t1.child_id = t2.id
-                          WHERE t1.serial_number = t3.serial_number AND t1.time = t3.recent_time
+                            (SELECT uuid, max(time) AS recent_time FROM notification GROUP BY uuid) t2
+                          WHERE t1.uuid = t2.uuid AND t1.time = t2.recent_time
                           ORDER BY time DESC`, []).then(([tx, results]) => {
               console.log("last notifications query completed")
               
               var len = results.rows.length
               for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i)
-                console.log(`Serial Number: ${row.serialNumber}, Battery: ${row.battery}, Time: ${row.time}, content: ${row.content}, confirmed: ${row.confirmed}, Child Name: ${row.childName}`)
-                const { serialNumber, battery, time, content, confirmed, childName } = row
-                notifications.push({ serialNumber, battery, time, content, confirmed, childName })
+                console.log(`UUID: ${row.uuid}, Serial Number: ${row.serialNumber}, Battery: ${row.battery}, Time: ${row.time}, content: ${row.content}, confirmed: ${row.confirmed}, Child Name: ${row.childName}`)
+                const { uuid, serialNumber, battery, time, content, confirmed, childName } = row
+                notifications.push({ uuid, serialNumber, battery, time, content, confirmed, childName })
               }
 
               console.log(notifications)

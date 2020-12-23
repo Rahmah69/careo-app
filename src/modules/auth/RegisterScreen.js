@@ -14,6 +14,7 @@ import { setUser, setUsers } from './AuthState'
 import { PRIVACY_POLICY_URL, TERM_SERVICE_URL, DEVICE_WIDTH, DB_USERS_KEY} from '../Constant'
 import {authStyles as styles} from '../../styles/authStyles'
 import {db} from '../Database'
+import {MAIN_TAB_NAV_NAME, LOGIN_PAGE_NAME} from '../navigation/stackNavigationData'
 
 
 class RegisterScreen extends Component {
@@ -171,11 +172,11 @@ class RegisterScreen extends Component {
     db.insertUser(userInfo)
 
     // goto the dashboard page
-    this.props.navigation.navigate('MainScreen')
+    this.props.navigation.navigate(MAIN_TAB_NAV_NAME)
   }
 
   onLogin = () => {
-    this.props.navigation.navigate('Login')
+    this.props.navigation.navigate(LOGIN_PAGE_NAME)
   }
 
   render() {

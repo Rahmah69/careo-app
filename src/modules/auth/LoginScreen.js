@@ -13,6 +13,9 @@ import { setUser, setIsLoggedIn } from './AuthState'
 import {DEVICE_WIDTH, DB_USERS_KEY} from '../Constant'
 import {authStyles as styles} from '../../styles/authStyles'
 import {db} from '../Database'
+import { setChildList } from '../child/ChildState'
+import { setDeviceList } from '../device/DeviceState'
+import {MAIN_TAB_NAV_NAME, REGISTER_PAGE_NAME} from '../navigation/stackNavigationData'
 
 class LoginScreen extends Component {
   constructor(props){
@@ -134,14 +137,24 @@ class LoginScreen extends Component {
     this.props.setUser(userInfo)
     this.props.setIsLoggedIn(true)
 
-    console.log("... ", this.props.userInfo)
-    this.props.navigation.navigate('MainScreen')
+    console.log(">>> logged user info: ", this.props.userInfo)
+
+    // load main information like child list, device list
+    let childList = await db.listChild(this.props.userInfo.id)
+    let deviceList = await db.listDevice(this.props.userInfo.id)
+    this.props.setChildList(childList)
+    this.props.setDeviceList(deviceList)
+
+    console.log(">>> initial child list: ", childList)
+    console.log(">>> initial device list: ", deviceList)
+    
+    this.props.navigation.navigate(MAIN_TAB_NAV_NAME)
 
     this.reset()
   }
 
   onRegister = () => {
-    this.props.navigation.navigate('Register')
+    this.props.navigation.navigate(REGISTER_PAGE_NAME)
 
     this.reset()
   }
@@ -223,7 +236,9 @@ export default compose(
     }),
     dispatch => ({
       setUser: (userInfo) => dispatch(setUser(userInfo)),
-      setIsLoggedIn: (isLoggedIn) => dispatch(setIsLoggedIn(isLoggedIn))
+      setIsLoggedIn: (isLoggedIn) => dispatch(setIsLoggedIn(isLoggedIn)),
+      setChildList: (childList) => dispatch(setChildList(childList)),
+      setDeviceList: (deviceList) => dispatch(setDeviceList(deviceList)),
     }),
   )
 )(LoginScreen)

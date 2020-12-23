@@ -39,7 +39,7 @@ export default Notification = (props) => {
           </View>
           <View flex={3} style={styles.contentTextSection}>
             <Text flex={1} style={{color: '#125171', fontSize: 14}}>
-              {notification.childName}
+              {notification.childName != null && notification.childName != '' ? notification.childName : notification.serialNumber}
             </Text>
             <Text flex={2} style={{color: '#125171', fontSize: 18, fontWeight: 'bold'}}>
               {notification.content}

@@ -7,14 +7,14 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  Alert
+  Alert,
+  Text
 } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { fonts, colors } from '../../styles'
-import { Text } from '../../components/StyledText'
 import {db} from '../Database'
 
 import { setIsLoggedIn, setUser } from './AuthState'
@@ -24,8 +24,8 @@ import UserInput from './UserInput'
 import defaultAvatarImg from '../../../assets/images/icons/default-avatar.png'
 import usernameImg from '../../../assets/images/icons/username.png'
 import passwordImg from '../../../assets/images/icons/password.png'
-import {PHOTO_WIDTH, PHOTO_HEIGHT, DEVICE_WIDTH, DEVICE_HEIGHT, HAED_PANEL_HEIGHT, BOTTOM_TAB_HEIGHT} from '../Constant'
-import ImagePickerSelModal from '../components/ImgPickerSelModal'
+import {DEVICE_WIDTH, DEVICE_HEIGHT, HAED_PANEL_HEIGHT, BOTTOM_TAB_HEIGHT} from '../Constant'
+import PickerImage from '../components/PickerImage'
 import { setGestureEnable, setHeaderShown } from '../navigation/NavigationState'
 
 class UserProfileScreen extends React.Component {
@@ -33,12 +33,11 @@ class UserProfileScreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      imagePickerVisible: false,
       userInfo: JSON.parse(JSON.stringify(this.props.userInfo)),
       showPass: true,
       confirm: '',
-      pageX: 0, pageY: 0,
-      isNameEditing: false
+      isNameEditing: false,
+      message: 'AAA'
     }
     this.nameInputField = React.createRef()
   }
@@ -173,14 +172,15 @@ class UserProfileScreen extends React.Component {
       return
     }
 
-    console.log(userInfo)
-
     // save the user info into the store
     this.props.setUser(userInfo)
 
     // save the users into the phone db
     let result = await db.updateUser(userInfo)
     console.log("update user result: ", result)
+
+
+    console.log("updated user info: ", userInfo)
 
     if (result.rowsAffected == 1) {
       Alert.alert(
@@ -202,11 +202,6 @@ class UserProfileScreen extends React.Component {
     this.props.navigation.navigate('Login')
   }
 
-  onPhotoClick = async (ev) => {
-    await this.setState({pageX: ev.nativeEvent.pageX, pageY: ev.nativeEvent.pageY})
-    this.setState({imagePickerVisible: true})
-  }
-
   onUserNamePressed = async () => {    
     await this.setState({ isNameEditing: true })
     this.nameInputField.focus()
@@ -218,63 +213,11 @@ class UserProfileScreen extends React.Component {
       this.setState({ isNameEditing: false })
   }
 
-  imagePickerCallBack = async (response) => {
-    console.log('Response = ', response)
-    if (response.didCancel) {
-      console.log('User cancelled image picker')
-      
-    } else if (response.errorCode) {
-      console.log('ImagePicker Error: ', response.error)
-
-    } else if (response.uri) {
-      console.log("response.uri: ", response.uri)
-      this.setPhotoUri(response.uri)
-    }
-  }
-
-  setFromLibrary = () => {
-
-    console.log("set from library")
-    let options = {
-      mediaType: 'photo',
-      saveToPhoto: true,
-    }
-
-    launchImageLibrary(options, this.imagePickerCallBack)
-  }
-
-  setFromCamara = () => {
-
-    console.log("set from library")
-    let options = {
-      mediaType: 'photo',
-      saveToPhoto: true,
-    }
-
-    launchCamera(options, this.imagePickerCallBack)
-  }
-
-  setChoice = async (isCamera) => {
-    await this.closeImagePicker()
-    setTimeout(() => {
-      if (isCamera) {
-        this.setFromCamara()
-      } else {
-        this.setFromLibrary()
-      }
-    }, 10)
-  }
-
   setPhotoUri = (uri) => {
     let userInfo = this.state.userInfo
     userInfo.imagePath = uri
 
     this.setState({userInfo: userInfo})
-  }
-  
-  closeImagePicker = () => {
-    console.log("close image picker selector")
-    this.setState({imagePickerVisible: false})
   }
 
   render() {
@@ -291,16 +234,13 @@ class UserProfileScreen extends React.Component {
 
           <View style={contentView}>
             <View style={{justifyContent: 'space-around', alignItems: 'center', flexDirection: 'column', height: 200}}>
-              <View style={{alignItems: 'center', justifyContent: 'center', width: 80, height: 120, marginTop: 30, marginBottom: 20}}>
-                <TouchableOpacity flex={1} 
-                    style={{ width: PHOTO_WIDTH, height: PHOTO_HEIGHT, borderRadius: PHOTO_WIDTH / 2}} 
-                    onPress={(ev) => {this.onPhotoClick(ev)}} activeOpacity={.8}>
-                  <Image flex={1} 
-                    source={this.state.userInfo.imagePath != null && this.state.userInfo.imagePath != '' ? {url: this.state.userInfo.imagePath} : defaultAvatarImg} 
-                    style={{height: PHOTO_WIDTH, width: PHOTO_HEIGHT, resizeMode:'stretch', borderRadius: PHOTO_WIDTH / 2, backgroundColor: '#AAA'
-                    }}/>
-                </TouchableOpacity>
-              </View>
+
+            <PickerImage 
+              style={{alignItems: 'center', justifyContent: 'center', width: 80, height: 120, marginTop: 30, marginBottom: 20}}
+              pickerTitle="Select Avatar"
+              imagePath={this.state.userInfo.imagePath}
+              defaultImage={defaultAvatarImg}
+              setImageUri={this.setPhotoUri} />
 
               {!this.state.isNameEditing ?
                 <Text 
@@ -374,9 +314,9 @@ class UserProfileScreen extends React.Component {
               />
             </View>
 
-            <View flex={1} style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+            <View flex={1} style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
               <TouchableOpacity 
-                style={{flex: 1, height: 40, alignItems: 'center'}}
+                style={{height: 40, width: 100, alignItems: 'center', marginHorizontal: 30}}
                 onPress={() => this.onSave()}
                 activeOpacity={.5}
               >
@@ -391,7 +331,7 @@ class UserProfileScreen extends React.Component {
               </TouchableOpacity>
 
               <TouchableOpacity 
-                style={{flex: 1, height: 40, alignItems: 'center'}}
+                style={{height: 40, width: 100, alignItems: 'center', marginHorizontal: 30}}
                 onPress={() => this.onLogOut()}
                 activeOpacity={.5}
               >
@@ -407,14 +347,6 @@ class UserProfileScreen extends React.Component {
             </View>
           </View>
         </KeyboardAwareScrollView>
-
-        <ImagePickerSelModal 
-          visible={this.state.imagePickerVisible}
-          title="Select Avatar"
-          pageX={this.state.pageX}
-          pageY={this.state.pageY}
-          close={this.closeImagePicker}
-          setChoice={this.setChoice} />
       </View>
 
     )

@@ -14,14 +14,10 @@ import {
 import { colors, fonts } from '../../styles'
 
 import { RadioGroup, GridRow } from '../../components'
-import { addChild, updateChild, removeChild, setSelIndex } from './ChildState'
+import { addChild, updateChild, removeChild, setSelIndex } from '../child/ChildState'
 import LinearGradient from 'react-native-linear-gradient'
 
 class DeviceListScreen extends React.Component {
-
-  _openArticle = article => {
-    this.props.navigation.navigate('ChildProfileScreen')
-  }  
 
   _renderItem = ({item, index}) => {
     let {card, cardImageSection, cardImage, cardContentSection, cardTextView, cardTextTitle, cardTextContent} = styles

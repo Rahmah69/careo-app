@@ -267,6 +267,8 @@ PODS:
     - React-Core
   - RNCMaskedView (0.1.10):
     - React
+  - RNCPicker (1.6.0):
+    - React
   - RNCPushNotificationIOS (1.8.0):
     - React-Core
   - RNGestureHandler (1.5.0):
@@ -323,6 +325,7 @@ DEPENDENCIES:
   - ReactNativeUiLib (from `../node_modules/react-native-ui-lib`)
   - "RNCCheckbox (from `../node_modules/@react-native-community/checkbox`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - "RNCPicker (from `../node_modules/@react-native-community/picker`)"
   - "RNCPushNotificationIOS (from `../node_modules/@react-native-community/push-notification-ios`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNLocalize (from `../node_modules/react-native-localize`)
@@ -409,6 +412,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/checkbox"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
+  RNCPicker:
+    :path: "../node_modules/@react-native-community/picker"
   RNCPushNotificationIOS:
     :path: "../node_modules/@react-native-community/push-notification-ios"
   RNGestureHandler:
@@ -466,6 +471,7 @@ SPEC CHECKSUMS:
   ReactNativeUiLib: 52606c273a072841c6fc5cfc9bd617fc87e5ca15
   RNCCheckbox: 80ee60cd2e67b46986e8e244db520655372deab4
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
+  RNCPicker: bab63e6fed69ac6122fcd9993209b6854de46d0b
   RNCPushNotificationIOS: 61a7c72bd1ebad3568025957d001e0f0e7b32191
   RNGestureHandler: a4ddde1ffc6e590c8127b8b7eabfdade45475c74
   RNLocalize: 7c7aeda16c01db7a0918981c14875c0a53be9b79

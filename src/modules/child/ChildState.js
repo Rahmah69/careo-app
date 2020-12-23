@@ -2,87 +2,95 @@
 // Initial state
 const initialState = {
   childList: [
-    {
-      id: 1,
-      name: 'AAA',
-      age: 10,
-      bloodType: 'A',
-      condition: 'Autism',
-      relationship: 'Mother',
-      imagePath: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
-      serialNumber: 'SFQIE1',
-      userId: 1,      
-    }, {
-      id: 2,
-      name: 'BBB',
-      age: 7,
-      bloodType: 'B',
-      condition: 'Autism',
-      relationship: 'Mother',
-      imagePath: '',
-      serialNumber: 'SFQIE2',
-      userId: 1,      
-    }, {
-      id: 3,
-      name: 'CCC',
-      age: 7,
-      bloodType: 'O',
-      condition: 'Autism',
-      relationship: 'Mother',
-      imagePath: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
-      serialNumber: '',
-      userId: 1,      
-    }, {
-      id: 3,
-      name: 'CCC',
-      age: 7,
-      bloodType: 'O',
-      condition: 'Autism',
-      relationship: 'Mother',
-      imagePath: '',
-      serialNumber: '',
-      userId: 1,      
-    }, {
-      id: 3,
-      name: 'CCC',
-      age: 7,
-      bloodType: 'O',
-      condition: 'Autism',
-      relationship: 'Mother',
-      imagePath: '',
-      serialNumber: '',
-      userId: 1,      
-    }, {
-      id: 3,
-      name: 'CCC',
-      age: 7,
-      bloodType: 'O',
-      condition: 'Autism',
-      relationship: 'Mother',
-      imagePath: '',
-      serialNumber: '',
-      userId: 1,      
-    }, {
-      id: 3,
-      name: 'CCC',
-      age: 7,
-      bloodType: 'O',
-      condition: 'Autism',
-      relationship: 'Mother',
-      imagePath: '',
-      serialNumber: '',
-      userId: 1,      
-    }, {
-      id: 3,
-      name: 'CCC',
-      age: 7,
-      bloodType: 'O',
-      condition: 'Autism',
-      relationship: 'Mother',
-      imagePath: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
-      serialNumber: '',
-      userId: 1,      
-    }
+    // {
+    //   id: 1,
+    //   name: 'AAA',
+    //   age: 10,
+    //   bloodType: 'A',
+    //   condition: 'Autism',
+    //   relationship: 'Mother',
+    //   imagePath: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+    //   uuid: '1234-2313-5323',
+    //   serialNumber: 'SFQIE1',
+    //   userId: 1,      
+    // }, {
+    //   id: 2,
+    //   name: 'BBB',
+    //   age: 7,
+    //   bloodType: 'B',
+    //   condition: 'Autism',
+    //   relationship: 'Mother',
+    //   imagePath: '',
+    //   uuid: '1234-2313-5323',
+    //   serialNumber: '',
+    //   userId: 1,      
+    // }, {
+    //   id: 3,
+    //   name: 'CCC',
+    //   age: 7,
+    //   bloodType: 'O',
+    //   condition: 'Autism',
+    //   relationship: 'Mother',
+    //   imagePath: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+    //   uuid: '1234-2313-5323',
+    //   serialNumber: '',
+    //   userId: 1,      
+    // }, {
+    //   id: 3,
+    //   name: 'CCC',
+    //   age: 7,
+    //   bloodType: 'O',
+    //   condition: 'Autism',
+    //   relationship: 'Mother',
+    //   imagePath: '',
+    //   uuid: '',
+    //   serialNumber: '',
+    //   userId: 1,      
+    // }, {
+    //   id: 3,
+    //   name: 'CCC',
+    //   age: 7,
+    //   bloodType: 'O',
+    //   condition: 'Autism',
+    //   relationship: 'Mother',
+    //   imagePath: '',
+    //   uuid: '',
+    //   serialNumber: '',
+    //   userId: 1,      
+    // }, {
+    //   id: 3,
+    //   name: 'CCC',
+    //   age: 7,
+    //   bloodType: 'O',
+    //   condition: 'Autism',
+    //   relationship: 'Mother',
+    //   imagePath: '',
+    //   uuid: '',
+    //   serialNumber: '',
+    //   userId: 1,      
+    // }, {
+    //   id: 3,
+    //   name: 'CCC',
+    //   age: 7,
+    //   bloodType: 'O',
+    //   condition: 'Autism',
+    //   relationship: 'Mother',
+    //   imagePath: '',
+    //   uuid: '1234-2313-5323',
+    //   serialNumber: '',
+    //   userId: 1,      
+    // }, {
+    //   id: 3,
+    //   name: 'CCC',
+    //   age: 7,
+    //   bloodType: 'O',
+    //   condition: 'Autism',
+    //   relationship: 'Mother',
+    //   imagePath: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+    //   uuid: '1234-2313-5323',
+    //   serialNumber: '',
+    //   userId: 1,      
+    // }
   ],
   selIndex: -1,
 }
@@ -157,11 +165,15 @@ export default function ChildStateReducer(state = initialState, action = {}) {
       })
 
     case ADD_CHILD:
-      childList.push(action.child)
+      console.log(">> add child action: ", action)
+      {
+        let childList = state.childList
+        childList.push(action.child)
 
-      return Object.assign({}, state, {
-        childList: childList,
-      })
+        return Object.assign({}, state, {
+          childList: childList,
+        })
+      }
 
     case UPDATE_CHILD:
       {
