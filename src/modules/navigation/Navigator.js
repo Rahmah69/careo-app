@@ -5,9 +5,13 @@ import {
   DrawerItem,
   DrawerContentScrollView,
 } from '@react-navigation/drawer'
-import NavigatorView from './RootNavigation'
+import RootNavigatorView from './RootNavigation'
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsLoggedIn } from '../auth/AuthState'
+import { setChildList } from '../child/ChildState'
+import { setDeviceList } from '../device/DeviceState'
+import { setNotiList, setLastNotiList } from '../notification/NotificationState'
+
 import { setGestureEnable, setHeaderShown } from './NavigationState'
 import NotificationListScreen from '../notification/NotificationListScreen'
 
@@ -53,6 +57,11 @@ function CustomDrawerContent(props) {
     dispatch(setIsLoggedIn(false))
     dispatch(setHeaderShown(false))
     dispatch(setGestureEnable(false))
+    dispatch(setChildList([]))
+    dispatch(setDeviceList([]))
+    dispatch(setNotiList([]))
+    dispatch(setLastNotiList([]))
+
 
     props.navigation.navigate('Login')
   }
@@ -123,7 +132,7 @@ export default function App() {
         gestureEnabled: gestureEnable
       }}
     >
-      <Drawer.Screen name="Homes" component={NavigatorView} />
+      <Drawer.Screen name="Homes" component={RootNavigatorView} />
     </Drawer.Navigator>
   )
 }

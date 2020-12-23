@@ -73,7 +73,7 @@ export const ExternalStackNavigationData = [
     },
   },
   {
-    name: 'Login',
+    name: LOGIN_PAGE_NAME,
     component: LoginScreen,
     headerLeft: null,
     headerBackground: { source: headerBackground },
@@ -85,7 +85,7 @@ export const ExternalStackNavigationData = [
     },
   },
   {
-    name: 'Register',
+    name: REGISTER_PAGE_NAME,
     component: RegisterScreen,
     headerLeft: headerLeftComponent,
     headerBackground: { source: headerBackground },
@@ -97,7 +97,7 @@ export const ExternalStackNavigationData = [
     },
   },
   {
-    name: 'Child List',
+    name: CHILD_LIST_PAGE_NAME,
     component: ChildListScreen,
     headerLeft: headerLeftComponent,
     headerBackground: { source: headerBackground },
@@ -108,7 +108,7 @@ export const ExternalStackNavigationData = [
     },
   },
   {
-    name: 'Notification History',
+    name: NOTI_HISTORY_PAGE_NAME,
     component: NotificationListScreen,
     headerLeft: headerLeftComponent,
     headerBackground: { source: headerBackground },
@@ -133,7 +133,7 @@ export const ExternalStackNavigationData = [
 
 export const ChildStackNavigationData = [
   {
-    name: 'Child List',
+    name: CHILD_LIST_PAGE_NAME,
     component: ChildListScreen,
     headerBackground: { source: headerBackground },
     headerShown: false,
@@ -144,7 +144,7 @@ export const ChildStackNavigationData = [
     },
   },
   {
-    name: 'Child Profile',
+    name: CHILD_PROFILE_PAGE_NAME,
     component: ChildProfileScreen,
     headerLeft: null,
     headerBackground: { source: headerBackground },
@@ -157,28 +157,28 @@ export const ChildStackNavigationData = [
   },
 ]
 
-// export const DeviceStackNavigationData = [
-//   {
-//     name: 'Device List',
-//     component: DeviceListScreen,
-//     headerBackground: { source: headerBackground },
-//     headerShown: false,
-//     headerTitleStyle: {
-//       fontFamily: fonts.primaryRegular,
-//       color: colors.white,
-//       fontSize: 18,
-//     },
-//   },
-//   {
-//     name: 'Device Setting',
-//     component: DeviceSettingScreen,
-//     headerLeft: null,
-//     headerBackground: { source: headerBackground },
-//     headerShown: false,
-//     headerTitleStyle: {
-//       fontFamily: fonts.primaryRegular,
-//       color: colors.white,
-//       fontSize: 18,
-//     },
-//   },
-// ]
+export const DeviceStackNavigationData = [
+  {
+    name: 'Device List',
+    component: DeviceListScreen,
+    headerBackground: { source: headerBackground },
+    headerShown: false,
+    headerTitleStyle: {
+      fontFamily: fonts.primaryRegular,
+      color: colors.white,
+      fontSize: 18,
+    },
+  },
+  {
+    name: 'Device Setting',
+    component: DeviceSettingScreen,
+    headerLeft: null,
+    headerBackground: { source: headerBackground },
+    headerShown: false,
+    headerTitleStyle: {
+      fontFamily: fonts.primaryRegular,
+      color: colors.white,
+      fontSize: 18,
+    },
+  },
+]

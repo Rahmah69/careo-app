@@ -5,7 +5,7 @@ import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { useSelector } from 'react-redux'
 
-import {ExternalStackNavigationData, ChildStackNavigationData} from './stackNavigationData';
+import {ExternalStackNavigationData, ChildStackNavigationData, DeviceStackNavigationData} from './stackNavigationData';
 
 const Stack = createStackNavigator();
 
@@ -76,29 +76,35 @@ export function ChildNavigatorView(props) {
 
   const headerShown = useSelector(state => state.navigation.headerShown)
 
-  const headerLeftComponentMenu = () => {
-    return (
-      <TouchableOpacity
-        onPress={() => props.navigation.toggleDrawer()}
-        style={{
-          paddingHorizontal: 16,
-          paddingVertical: 12,
-        }}
-      >
-        <Image
-          source={require('../../../assets/images/drawer/menu.png')}
-          resizeMode="contain"
-          style={{
-            height: 20,
-          }}
-        />
-      </TouchableOpacity>    
-    )
-  }
-
   return (
     <Stack.Navigator>
       {ChildStackNavigationData.map((item, idx) => (
+        <Stack.Screen
+          key={`stack_item-${idx+1}`}
+          name={item.name} 
+          component={item.component} 
+          options={{
+            headerShown: headerShown,
+            gestureEnabled: false,   
+            headerBackground: () => (
+              <Image style={styles.headerImage} source={item.headerBackground.source} />
+            ),
+            headerTitleStyle: item.headerTitleStyle,
+          }} 
+        />
+      ))}
+    </Stack.Navigator>
+  );
+}
+
+
+export function DeviceNavigatorView(props) {
+
+  const headerShown = useSelector(state => state.navigation.headerShown)
+
+  return (
+    <Stack.Navigator>
+      {DeviceStackNavigationData.map((item, idx) => (
         <Stack.Screen
           key={`stack_item-${idx+1}`}
           name={item.name} 

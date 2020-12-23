@@ -16,9 +16,17 @@ import {DEVICE_HEIGHT} from '../Constant'
 import {db} from '../Database'
 import LastNotificationList from './LastNotificationList'
 
-export default function HomeScreen(/*{ isExtended, setIsExtended }*/) {
+import {ChildNavigatorView, DeviceNavigatorView} from '../navigation/RootNavigation'
+import {MAIN_TAB_NAV_NAME, REGISTER_PAGE_NAME, CHILD_LIST_PAGE_NAME} from '../navigation/stackNavigationData'
+
+export default function HomeScreen(props/*, { isExtended, setIsExtended }*/) {
   
   const userInfo = useSelector(state => state.auth.userInfo)
+  const isSignedUp = useSelector(state => state.auth.isSignedUp)
+
+  console.log(" Home Screen Started...")
+  if (isSignedUp)
+    props.navigation.navigate('Bracelet')
 
   const dispatch = useDispatch()
   dispatch(setHeaderShown(false))

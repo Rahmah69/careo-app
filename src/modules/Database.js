@@ -584,16 +584,16 @@ export default class Database {
       })  
     }
 
-    getLastNotificationsByConnectedDevice() {   
+    getLastNotificationsByConnectedDevice(userId) {   
       return new Promise((resolve) => {
         const notifications = []
         this.initDB().then((db) => {
           db.transaction((tx) => {
             tx.executeSql(`SELECT t1.uuid, t1.serial_number AS serialNumber, t1.battery, t1.time, t1.content, t1.confirmed, t1.child_name AS childName 
                           FROM notification t1, device t2 
-                          WHERE t1.uuid = t2.uuid AND t2.is_connected = 1
+                          WHERE t1.uuid = t2.uuid AND t2.is_connected = 1 AND t1.user_id = ?
                           ORDER BY time DESC
-                          LIMIT 3`, []).then(([tx, results]) => {
+                          LIMIT 3`, [userId]).then(([tx, results]) => {
               console.log("last notifications query completed")
               
               var len = results.rows.length
@@ -619,7 +619,7 @@ export default class Database {
       })  
     }
 
-    getLastNotificationsByAddedDevices() {
+    getLastNotificationsByAddedDevices(userId) {
       return new Promise((resolve) => {
         const notifications = []
         this.initDB().then((db) => {
@@ -627,8 +627,8 @@ export default class Database {
             tx.executeSql(`SELECT t1.uuid, t1.serial_number AS serialNumber, t1.battery, t1.time, t1.content, t1.confirmed, t1.child_name AS childName 
                           FROM notification t1, 
                             (SELECT uuid, max(time) AS recent_time FROM notification GROUP BY uuid) t2
-                          WHERE t1.uuid = t2.uuid AND t1.time = t2.recent_time
-                          ORDER BY time DESC`, []).then(([tx, results]) => {
+                          WHERE t1.uuid = t2.uuid AND t1.time = t2.recent_time AND t1.user_id = ?
+                          ORDER BY time DESC`, [userId]).then(([tx, results]) => {
               console.log("last notifications query completed")
               
               var len = results.rows.length

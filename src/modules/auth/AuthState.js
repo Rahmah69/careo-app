@@ -1,12 +1,14 @@
 // Initial state
 const initialState = {
   userInfo: {},
-  isLoggedIn: false
+  isLoggedIn: false,
+  isSignedUp: false,
 }
 
 // Actions
 const SET_USER = 'SET_USER'
 const SET_IS_LOGGED_IN = 'SET_IS_LOGGED_IN'
+const SET_IS_SIGNED_UP = 'SET_IS_SIGNED_UP'
 
 // Action creators
 function setUserAction(userInfo) {
@@ -15,6 +17,10 @@ function setUserAction(userInfo) {
 
 function setIsLoggedInAction(isLoggedIn) {
   return { type: SET_IS_LOGGED_IN , isLoggedIn}
+}
+
+function setIsSignedUpAction(isSignedUp) {
+  return { type: SET_IS_SIGNED_UP , isSignedUp}
 }
 
 export function setUser(userInfo) {
@@ -26,6 +32,12 @@ export function setUser(userInfo) {
 export function setIsLoggedIn(isLoggedIn) {
   return dispatch => {
     dispatch(setIsLoggedInAction(isLoggedIn))
+  }
+}
+
+export function setIsSignedUp(isSignedUp) {
+  return dispatch => {
+    dispatch(setIsSignedUpAction(isSignedUp))
   }
 }
 
@@ -44,6 +56,12 @@ export default function AuthStateReducer(state = initialState, action = {}) {
       return Object.assign({}, state, {
         isLoggedIn: action.isLoggedIn
       })
+
+      case SET_IS_SIGNED_UP:
+        console.log(">>> SET IS SIGNED UP ")
+        return Object.assign({}, state, {
+          isSignedUp: action.isSignedUp
+        })
 
     default:
       console.log(">>> DEFAULT ", state)

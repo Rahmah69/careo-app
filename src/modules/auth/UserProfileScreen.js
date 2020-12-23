@@ -1,23 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { compose } from 'recompose'
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Image,
-  TextInput,
-  Alert,
-  Text
-} from 'react-native'
+import {  StyleSheet,  View,  TouchableOpacity,  Image,  TextInput,  Alert,  Text } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { fonts, colors } from '../../styles'
 import {db} from '../Database'
 
-import { setIsLoggedIn, setUser } from './AuthState'
 import HeadPanel from '../components/HeadPanel'
 
 import UserInput from './UserInput'
@@ -26,7 +16,12 @@ import usernameImg from '../../../assets/images/icons/username.png'
 import passwordImg from '../../../assets/images/icons/password.png'
 import {DEVICE_WIDTH, DEVICE_HEIGHT, HAED_PANEL_HEIGHT, BOTTOM_TAB_HEIGHT} from '../Constant'
 import PickerImage from '../components/PickerImage'
+
+import { setIsLoggedIn, setUser } from './AuthState'
 import { setGestureEnable, setHeaderShown } from '../navigation/NavigationState'
+import { setChildList } from '../child/ChildState'
+import { setDeviceList } from '../device/DeviceState'
+import { setNotiList, setLastNotiList } from '../notification/NotificationState'
 
 class UserProfileScreen extends React.Component {
 
@@ -198,6 +193,10 @@ class UserProfileScreen extends React.Component {
     this.props.setIsLoggedIn(false)
     this.props.setHeaderShown(false)
     this.props.setGestureEnable(false)
+    this.props.setChildList([])
+    this.props.setDeviceList([])
+    this.props.setNotiList([])
+    this.props.setLastNotiList([])
 
     this.props.navigation.navigate('Login')
   }
@@ -362,7 +361,11 @@ export default compose(
       setUser: (userInfo) => dispatch(setUser(userInfo)),
       setIsLoggedIn: (isLoggedIn) => dispatch(setIsLoggedIn(isLoggedIn)),
       setHeaderShown: (headerShown) => dispatch(setHeaderShown(headerShown)),
-      setGestureEnable: (gestureEnable) => dispatch(setGestureEnable(gestureEnable))
+      setGestureEnable: (gestureEnable) => dispatch(setGestureEnable(gestureEnable)),
+      setChildList: (childList) => dispatch(setChildList(childList)),
+      setDeviceList: (deviceList) => dispatch(setDeviceList(deviceList)),
+      setNotiList: (notiList) => dispatch(setNotiList(notiList)),
+      setLastNotiList: (lastNotiList) => dispatch(setLastNotiList(lastNotiList)),
     }),
   )
 )(UserProfileScreen)

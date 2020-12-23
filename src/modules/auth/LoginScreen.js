@@ -15,7 +15,8 @@ import {authStyles as styles} from '../../styles/authStyles'
 import {db} from '../Database'
 import { setChildList } from '../child/ChildState'
 import { setDeviceList } from '../device/DeviceState'
-import {MAIN_TAB_NAV_NAME, REGISTER_PAGE_NAME} from '../navigation/stackNavigationData'
+import { setNotiList, setLastNotiList } from '../notification/NotificationState'
+import {MAIN_TAB_NAV_NAME, REGISTER_PAGE_NAME, CHILD_LIST_PAGE_NAME} from '../navigation/stackNavigationData'
 
 class LoginScreen extends Component {
   constructor(props){
@@ -142,8 +143,16 @@ class LoginScreen extends Component {
     // load main information like child list, device list
     let childList = await db.listChild(this.props.userInfo.id)
     let deviceList = await db.listDevice(this.props.userInfo.id)
+    let lastNotiList = await db.getLastNotificationsByConnectedDevice(this.props.userInfo.id)
+    let notiList = await db.listNotification(this.props.userInfo.id)
+
+    console.log(">>> initial notiList: ", notiList)
+    console.log(">>> initial lastNotiList: ", lastNotiList)
+
     this.props.setChildList(childList)
     this.props.setDeviceList(deviceList)
+    this.props.setNotiList(notiList)
+    this.props.setLastNotiList(lastNotiList)
 
     console.log(">>> initial child list: ", childList)
     console.log(">>> initial device list: ", deviceList)
@@ -239,6 +248,8 @@ export default compose(
       setIsLoggedIn: (isLoggedIn) => dispatch(setIsLoggedIn(isLoggedIn)),
       setChildList: (childList) => dispatch(setChildList(childList)),
       setDeviceList: (deviceList) => dispatch(setDeviceList(deviceList)),
+      setNotiList: (notiList) => dispatch(setNotiList(notiList)),
+      setLastNotiList: (notiList) => dispatch(setLastNotiList(notiList))
     }),
   )
 )(LoginScreen)

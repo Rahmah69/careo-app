@@ -10,7 +10,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import UserInput from './UserInput'
 import usernameImg from '../../../assets/images/icons/username.png'
 import passwordImg from '../../../assets/images/icons/password.png'
-import { setUser, setUsers } from './AuthState'
+import { setUser, setIsSignedUp } from './AuthState'
 import { PRIVACY_POLICY_URL, TERM_SERVICE_URL, DEVICE_WIDTH, DB_USERS_KEY} from '../Constant'
 import {authStyles as styles} from '../../styles/authStyles'
 import {db} from '../Database'
@@ -163,13 +163,16 @@ class RegisterScreen extends Component {
       return
     }
 
+    // save the users into the phone db
+    let result = await db.insertUser(userInfo)
+
     console.log(userInfo)
 
-    // save the user info into the store
-    this.props.setUser(userInfo)
+    userInfo = result.insertId
 
-    // save the users into the phone db
-    db.insertUser(userInfo)
+    // save the user info into the store
+    await this.props.setUser(userInfo)
+    await this.props.setIsSignedUp(true)
 
     // goto the dashboard page
     this.props.navigation.navigate(MAIN_TAB_NAV_NAME)
@@ -305,7 +308,8 @@ export default compose(
       userInfo: state.auth.userInfo,
     }),
     dispatch => ({
-      setUser: (userInfo) => dispatch(setUser(userInfo))
+      setUser: (userInfo) => dispatch(setUser(userInfo)),
+      setIsSignedUp: (isSignedUp) => dispatch(setIsSignedUp(isSignedUp))
     }),
   )
 ) (RegisterScreen)
