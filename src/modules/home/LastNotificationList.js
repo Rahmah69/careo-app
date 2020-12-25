@@ -1,44 +1,65 @@
+import { connect } from 'react-redux'
+import { compose } from 'recompose'
 import React, { useState, useEffect } from 'react'
 import {
   StyleSheet,
   View,
   ScrollView,
-  TouchableOpacity,
-  ImageBackground,
 } from 'react-native'
 
-import moment from "moment"
-import {useSelector} from 'react-redux'
-
-import { fonts, colors } from '../../styles'
-import timer from 'react-native-timer'
 import Notification from '../notification/Notification'
-import {db} from '../Database'
 
+class LastNotificationList extends React.Component {
 
-export default LastNotificationList = (props) => {
+  constructor(props) {
+    super(props)
+    this.state = {
+      lastNotiList: this.props.lastNotiList,
+    }    
+  }
 
-  const lastNotiList = useSelector(state => state.notification.lastNotiList)
+  componentDidMount = () => {    
+    setInterval(() => {
+      this.refreshList()
+    }, 1000)
+  }
 
-  return (
-    <ScrollView style={props.style}>
+  refreshList = () => {
+    // this.setState({lastNotiList: this.props.lastNotiList})
+  }
+
+  render() {
+    return (
+      <ScrollView style={this.props.style}>
       {
-      lastNotiList.map((item, index) => {
-        console.log(">>>> notification map - item: ", item)
-        return <View style={{height: 100}}>
-        <Notification 
-          notification={item}
-          isBatteryShown={true}
-          isConnectionShown={true}
-          style={styles.notificationSection}
-        />
-        <View style={styles.divider} />
-        </View>
-      })
-      }
-    </ScrollView>
-  )
+        this.state.lastNotiList.map((item, index) => {
+          console.log(">>>> notification map - item: ", item)
+          return <View style={{height: 100}}>
+          <Notification 
+            notification={item}
+            isBatteryShown={true}
+            isConnectionShown={true}
+            style={styles.notificationSection}
+          />
+          <View style={styles.divider} />
+          </View>
+        })
+        }
+      </ScrollView>
+    )
+  }
 }
+
+export default compose(
+  connect(
+    state => ({
+      lastNotiList: state.notification.lastNotiList
+    }),
+    dispatch => ({
+      setLastNotiList: (notiList) => dispatch(setLastNotiList(notiList)),
+    }),
+  )
+)(LastNotificationList)
 
 const styles = StyleSheet.create({
   notificationSection: {

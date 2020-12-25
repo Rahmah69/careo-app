@@ -14,23 +14,43 @@ import {
 import LinearGradient from 'react-native-linear-gradient'
 import { colors, fonts } from '../../styles'
 
-import { addChild, updateChild, removeChild, setSelIndex } from './ChildState'
+import { addChild, updateChild, removeChild, setSelChildIndex } from './ChildState'
 import HeadPanel from '../components/HeadPanel'
 import {CHILD_PROFILE_PAGE_NAME} from '../navigation/stackNavigationData'
+import { setLastNotiList, setNotiList } from '../notification/NotificationState'
 
 class ChildListScreen extends React.Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      childList: this.props.childList,
+    }
+  }
+
   componentDidMount() {
     console.log(">>> Child List Screen Did Mount")
+
+    this.onFocusPage = this.props.navigation.addListener('focus', () => {
+      console.log(">>> child list page focus")
+      this.setState({childList: this.props.childList})
+
+      // let notiList = this.props.notiList
+      // notiList.splice(0, 1)
+      // this.props.setNotiList(notiList)
+    })
+
   }
 
   onAdd = () => {
-    this.props.setSelIndex(-1)
+    this.props.setSelChildIndex(-1)
+    console.log(">> on Add sel index: ", this.props.selChildIndex)
     this.props.navigation.navigate(CHILD_PROFILE_PAGE_NAME)
   }
 
   onItemView = (index) => {
-    this.props.setSelIndex(index)
+    this.props.setSelChildIndex(index)
+    console.log(">> on onItemView sel index: ", this.props.selChildIndex)
     this.props.navigation.navigate(CHILD_PROFILE_PAGE_NAME)
   }
 
@@ -62,14 +82,14 @@ class ChildListScreen extends React.Component {
   }
 
   render() {
-    let { headerSection, headerText, buttonSection, button, linearGradient, buttonText} = styles
+    let { buttonSection, button, linearGradient, buttonText} = styles
     return (      
       <View style={styles.container}>
         <HeadPanel title="Child List"/>
 
         <FlatList style={{marginTop: 10}}
-          data={this.props.childList}
-          keyExtractor={(item, index) => index.toString()}
+          data={this.state.childList}
+          keyExtractor={(item) => item.id}
           renderItem={this._renderItem}
         />
 
@@ -97,10 +117,15 @@ class ChildListScreen extends React.Component {
 export default compose(
   connect(
     state => ({
-      childList: state.child.childList
+      childList: state.child.childList,
+      selChildIndex: state.child.selChildIndex,
+      lastNotiList: state.notification.lastNotiList,
+      notiList: state.notification.notiList,
     }),
     dispatch => ({
-      setSelIndex: (selIndex) => dispatch(setSelIndex(selIndex)),
+      setSelChildIndex: (selChildIndex) => dispatch(setSelChildIndex(selChildIndex)),
+      setLastNotiList: (notiList) => dispatch(setLastNotiList(notiList)),
+      setNotiList: (notiList) => dispatch(setNotiList(notiList)),
     }),
   )
 )(ChildListScreen)
@@ -109,20 +134,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-  },
-  headerSection: {
-    height: 44 + 40, 
-    width: '100%', 
-    backgroundColor: '#C4CBC8'
-  },
-  headerText: {
-    marginTop: 50, 
-    height: 50, 
-    textAlign: 'center', 
-    textAlignVertical: 'center',
-    fontSize: 18, 
-    fontWeight: 'bold', 
-    color: '#125171'
   },
   card: {
     backgroundColor: '#fff',
@@ -180,7 +191,8 @@ const styles = StyleSheet.create({
   buttonSection: {
     height: 50, 
     width: '100%', 
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 15,
   },
   button: {
     alignItems: 'center',

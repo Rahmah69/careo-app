@@ -250,7 +250,7 @@ export default class Database {
         const childs = []
         this.initDB().then((db) => {
           db.transaction((tx) => {
-            tx.executeSql(`SELECT t1.id, t1.name, t1.age, t1.blood_type AS bloodType, t1.condition, t1.relationship, t1.image_path AS imagePath, t1.uuid, t2.serial_number as serialNumber 
+            tx.executeSql(`SELECT t1.id, t1.name, t1.age, t1.blood_type AS bloodType, t1.condition, t1.relationship, t1.image_path AS imagePath, t1.uuid, t2.serial_number as serialNumber, t1.user_id as userId
                           FROM child t1 
                           LEFT JOIN device t2 ON t1.uuid = t2.uuid
                           WHERE t1.user_id = ?`, [userId]).then(([tx, results]) => {
@@ -259,9 +259,10 @@ export default class Database {
               var len = results.rows.length
               for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i)
-                console.log(`Child Id: ${row.id}, Child Name: ${row.name}, Age: ${row.age}, Blood Type: ${row.bloodType}, Condition: ${row.condition}, Relationship: ${row.relationship}, Image Path: ${row.imagePath}, UUID: ${row.uuid}, Serial Number: ${row.serialNumber} `)
-                const { id, name, age, bloodType, condition, relationship, imagePath, uuid, serialNumber } = row
-                childs.push({ id, name, age, bloodType, condition, relationship, imagePath, uuid, serialNumber })
+                console.log(`Child Id: ${row.id}, Child Name: ${row.name}, Age: ${row.age}, Blood Type: ${row.bloodType}, Condition: ${row.condition}, Relationship: ${row.relationship}, 
+                                      Image Path: ${row.imagePath}, UUID: ${row.uuid}, Serial Number: ${row.serialNumber}, User Id: ${row.userId} `)
+                const { id, name, age, bloodType, condition, relationship, imagePath, uuid, serialNumber, userId } = row
+                childs.push({ id, name, age, bloodType, condition, relationship, imagePath, uuid, serialNumber, userId })
               }
 
               console.log(childs)
@@ -356,6 +357,30 @@ export default class Database {
       })  
     }
 
+    updateChildWithUUID(childId, uuid) {
+      return new Promise((resolve) => {
+        this.initDB().then((db) => {
+
+          let strCurDateTime = this.getCurrentDateTimeString()
+          db.transaction((tx) => {
+            tx.executeSql(`UPDATE child SET uuid = ? WHERE id = ?`, 
+                            [uuid, child.id]).then(([tx, results]) => {
+              console.log("update child query with uuid completed")
+              resolve(results)
+            })
+          }).then((result) => {
+            this.closeDatabase(db)
+
+          }).catch((err) => {
+            console.log(err)
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      })  
+
+    }
+
     deleteChild(childId) {
       return new Promise((resolve) => {
         this.initDB().then((db) => {
@@ -381,15 +406,18 @@ export default class Database {
         const devices = []
         this.initDB().then((db) => {
           db.transaction((tx) => {
-            tx.executeSql(`SELECT uuid, serial_number AS serialNumber, battery, last_sync_time AS lastSyncTime, is_connected AS isConnected FROM device WHERE user_id = ?`, [userId]).then(([tx, results]) => {
+            tx.executeSql(`SELECT t1.uuid, t1.serial_number AS serialNumber, t1.battery, t1.last_sync_time AS lastSyncTime, 
+                            t1.is_connected AS isConnected, t2.id as childId, t2.name as childName, t2.image_path as childPhoto, t1.user_id as userId
+                          FROM device t1
+                          LEFT JOIN child t2 ON t1.uuid = t2.uuid
+                          WHERE t1.user_id = ?`, [userId]).then(([tx, results]) => {
               console.log("list device query completed")
               
               var len = results.rows.length
               for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i)
-                console.log(`UUID: ${row.uuid}, Serial Number: ${row.serialNumber}, Battery: ${row.battery}, Last Sync Time: ${row.lastSyncTime}, IsConnected: ${row.isConnected}`)
-                const { uuid, serialNumber, battery, lastSyncTime, isConnected } = row
-                devices.push({ uuid, serialNumber, battery, lastSyncTime, isConnected })
+                const { uuid, serialNumber, battery, lastSyncTime, isConnected, childId, childName, childPhoto, userId } = row
+                devices.push({ uuid, serialNumber, battery, lastSyncTime, isConnected, childId, childName, childPhoto, userId})
               }
 
               console.log(devices)

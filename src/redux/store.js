@@ -1,6 +1,7 @@
 import { applyMiddleware, createStore, compose } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+// import storage from 'redux-persist/lib/storage';
+import AsyncStorage from '@react-native-community/async-storage';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import reducer from './reducer';
@@ -28,7 +29,7 @@ const enhancer = composeEnhancers(...enhancers);
 
 const persistConfig = {
   key: 'root',
-  storage,
+  storage: AsyncStorage,
   blacklist: [],
 };
 

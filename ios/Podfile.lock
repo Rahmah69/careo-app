@@ -263,6 +263,8 @@ PODS:
     - React-jsi (= 0.63.4)
   - ReactNativeUiLib (3.41.0):
     - React
+  - RNCAsyncStorage (1.12.1):
+    - React-Core
   - RNCCheckbox (0.5.6):
     - React-Core
   - RNCMaskedView (0.1.10):
@@ -323,6 +325,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeUiLib (from `../node_modules/react-native-ui-lib`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCCheckbox (from `../node_modules/@react-native-community/checkbox`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - "RNCPicker (from `../node_modules/@react-native-community/picker`)"
@@ -408,6 +411,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeUiLib:
     :path: "../node_modules/react-native-ui-lib"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-community/async-storage"
   RNCCheckbox:
     :path: "../node_modules/@react-native-community/checkbox"
   RNCMaskedView:
@@ -469,6 +474,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
   ReactNativeUiLib: 52606c273a072841c6fc5cfc9bd617fc87e5ca15
+  RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNCCheckbox: 80ee60cd2e67b46986e8e244db520655372deab4
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNCPicker: bab63e6fed69ac6122fcd9993209b6854de46d0b

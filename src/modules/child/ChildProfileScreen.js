@@ -25,7 +25,7 @@ import PickerImage from '../components/PickerImage'
 import InputFieldWithDevider from '../components/InputFieldWithDevider'
 import SelectFieldWithDevider from '../components/SelectFieldWithDevider'
 
-import { addChild, updateChild, removeChild, setSelIndex } from './ChildState'
+import { addChild, updateChild, removeChild } from './ChildState'
 
 class ChildProfileScreen extends React.Component {
 
@@ -33,8 +33,8 @@ class ChildProfileScreen extends React.Component {
     super(props)
     this.state = {
       childInfo: 
-        this.props.selIndex != -1 
-        ? JSON.parse(JSON.stringify(this.props.childList[this.props.selIndex])) 
+        this.props.selChildIndex != -1 
+        ? JSON.parse(JSON.stringify(this.props.childList[this.props.selChildIndex])) 
         : {
           id: -1, name: '', imagePath: '', age: 0, bloodType: '', condition: '', relationship: '', uuid: '', serialNumber: '', userId: this.props.userInfo.id
         },
@@ -58,11 +58,13 @@ class ChildProfileScreen extends React.Component {
         { label: '1FU4209', value: '1FU4209'},
       ]
     }
+
+    console.log("Child Profile sel index: ", this.props.selChildIndex)
     this.nameInputField = React.createRef()
   }
 
   componentDidMount = async () => {
-    if (this.props.selIndex == -1) {
+    if (this.props.selChildIndex == -1) {
       this.setState({isNameEditing: true})
       this.nameInputField.focus()
     }
@@ -134,12 +136,68 @@ class ChildProfileScreen extends React.Component {
   }
   
 
-  onSave = () => {
+  onSave = async () => {
+    if (!this.isValidFields()) 
+      return
 
+    let childInfo = this.state.childInfo
+    let result = await db.updateChild(childInfo)
+    console.log("save child result: ", result)
+    
+    if (result.rowsAffected == 1) {
+      await this.props.updateChild(childInfo)
+
+      console.log("updated child list: ", this.props.childList)
+
+      Alert.alert(
+        'Success',
+        'The child info has been updated.',
+        [
+          { text: 'OK', onPress: () => {this.props.navigation.goBack()} }
+        ],
+        { cancelable: false }
+      )
+    } else {
+
+      Alert.alert(
+        'Failed',
+        'Updating child info has failed.',
+        [
+          { text: 'OK', onPress: () => {} }
+        ],
+        { cancelable: false }
+      )
+    }
   }
 
   onDelete = () => {
+    Alert.alert(
+      "Confirm",
+      "Are you sure to delete this child's information?",
+      [
+        {
+          text: "Yes",
+          onPress: async () => {
+            let childId = this.state.childInfo.id
+            console.log("deleting child information")
+            let result = await db.deleteChild(childId)
+            console.log(">>> deleting child result: ", result)
+            this.props.removeChild(childId)
 
+            // go back
+            this.props.navigation.goBack()
+          }
+        },
+        {
+          text: "No",
+          onPress: () => {
+            console.log("No Pressed")
+          },
+          style: "cancel"
+        },
+      ],
+      { cancelable: false }
+    )
   }
 
   isValidFields = () => {
@@ -191,6 +249,22 @@ class ChildProfileScreen extends React.Component {
         { cancelable: false }
       )
       return false
+    }
+
+    // check if duplicated child exists
+    let childList = this.props.childList
+    for (let el of childList) {
+      if (el.id != childInfo.id && el.name == childInfo.name) {
+        Alert.alert(
+          'Duplicated',
+          "The child's name already exists. Please input another child name",
+          [
+            { text: 'OK', onPress: () => {} }
+          ],
+          { cancelable: false }
+        )
+        return false
+      }
     }
 
     return true
@@ -303,7 +377,7 @@ class ChildProfileScreen extends React.Component {
     return (      
       <View style={styles.container}>
         
-        <HeadPanel title={this.props.selIndex == -1 ? "Add Child" : "Child Profile"} onPress={() => {this.props.navigation.navigate('Child List')}}/>
+        <HeadPanel title={this.props.selChildIndex == -1 ? "Add Child" : "Child Profile"} onPress={() => {this.props.navigation.navigate('Child List')}}/>
 
         <KeyboardAwareScrollView
           resetScrollToCoords={{ x: 0, y: 0 }}
@@ -378,7 +452,7 @@ class ChildProfileScreen extends React.Component {
               />
             </View>
 
-            {this.props.selIndex == -1 
+            {this.props.selChildIndex == -1 
             ?
             <View style={{marginTop: 30, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
               <TouchableOpacity 
@@ -441,7 +515,7 @@ export default compose(
   connect(
     state => ({
       childList: state.child.childList,
-      selIndex: state.child.selIndex,
+      selChildIndex: state.child.selChildIndex,
       userInfo: state.auth.userInfo
     }),
     dispatch => ({

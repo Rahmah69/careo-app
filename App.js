@@ -1,6 +1,6 @@
 import { Provider } from 'react-redux';
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, LogBox } from 'react-native';
 import { PersistGate } from 'redux-persist/integration/react';
 import { NavigationContainer } from '@react-navigation/native';
 import { colors } from './src/styles';
@@ -10,6 +10,9 @@ import { store, persistor } from './src/redux/store';
 import AppView from './src/modules/AppViewContainer';
 
 export default function App() {
+  
+  LogBox.ignoreAllLogs()
+
   return (
     <Provider store={store}>
       <NavigationContainer>

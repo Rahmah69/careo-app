@@ -150,9 +150,9 @@ class LoginScreen extends Component {
     console.log(">>> initial lastNotiList: ", lastNotiList)
 
     this.props.setChildList(childList)
-    this.props.setDeviceList(deviceList)
-    this.props.setNotiList(notiList)
-    this.props.setLastNotiList(lastNotiList)
+    // this.props.setDeviceList(deviceList)
+    // this.props.setNotiList(notiList)
+    // this.props.setLastNotiList(lastNotiList)
 
     console.log(">>> initial child list: ", childList)
     console.log(">>> initial device list: ", deviceList)
@@ -241,7 +241,8 @@ class LoginScreen extends Component {
 export default compose(
   connect(
     state => ({
-      userInfo: state.auth.userInfo
+      userInfo: state.auth.userInfo,
+      lastNotiList: state.notification.lastNotiList
     }),
     dispatch => ({
       setUser: (userInfo) => dispatch(setUser(userInfo)),

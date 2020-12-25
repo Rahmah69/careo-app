@@ -2,26 +2,15 @@ import React from 'react'
 import {  StyleSheet,  View,  Text,  TextInput } from 'react-native'
 import {DEVICE_WIDTH, DEVICE_HEIGHT, INPUT_FIELD_HEIGHT, INPUT_FIELD_HORZ_MARGIN} from '../Constant'
 
-export default function InputFieldWithDevider(props) {
+export default function TextFieldWithDevider(props) {
 
+    const inputStyle = props.style ? props.style : {}
+    const style = props.style ? {...styles.input, ...inputStyle} : styles.input
+    console.log(">>> input style: ", style)
     return (
       <View style={styles.container}>
-        <View>
-          <TextInput 
-            ref={ref => { if (props.registerInputField != null) props.registerInputField(ref)}}                      
-            style={styles.input}
-            autoCorrect={false}
-            autoCapitalize={'none'}
-            returnKeyType={'done'}
-            placeholderTextColor="gray"
-            underlineColorAndroid="transparent"
-            multiline={false}
-            numberOfLines={2}
-            value={props.value.toString()}
-            disable={props.disable ? true : false}
-            onChangeText={(value) => {if (props.onChangeText != null) props.onChangeText(value)}}
-            onBlur={(ev) => {if (props.onBlur != null) props.onBlur(ev)}}
-          />
+        <View style={{justifyContent: 'center', alignItems: 'flex-start'}}>
+          <Text style={props.style ? {...styles.input, ...inputStyle} : styles.input}>{props.value}</Text>
           <Text style={styles.title}>{props.title}</Text>
         </View>
         <View style={styles.devider}/>
@@ -37,17 +26,19 @@ const styles = StyleSheet.create({
     marginTop: DEVICE_HEIGHT / 40
   },
   input: {
-    backgroundColor: '#AAA',
+    // backgroundColor: '#AAA',
     width: (DEVICE_WIDTH - INPUT_FIELD_HORZ_MARGIN * 2),
     height: 50,
     marginHorizontal: INPUT_FIELD_HORZ_MARGIN,
     borderRadius: 0,
     color: '#000',
-    fontSize: 20,
+    fontSize: 18,
     textAlign: 'right',
     opacity: 0.5,
-    paddingTop: -10,
-    textAlignVertical: 'center'
+    paddingTop: DEVICE_HEIGHT / 60,
+    textAlignVertical: 'center', 
+    alignContent: 'center',
+    alignSelf: 'baseline'
   },
   title: {
     fontSize: 20, 

@@ -16,6 +16,19 @@ import Notification from './Notification'
 
 class NotificationListScreen extends React.Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      notiList: this.props.notiList
+    }
+  }
+
+  componentDidMount = () => {
+    this.onFocus = this.props.navigation.addListener('focus', () => {
+      this.setState({notiList: this.props.notiList})
+    })
+  }
+
   render() {
     let { container, notificationSection, divider} = styles
     return (      
@@ -26,7 +39,7 @@ class NotificationListScreen extends React.Component {
 
         <ScrollView style={{marginHorizontal: 20, marginVertical: 10}}>
           {
-          this.props.notiList.map((item, index) => {
+          this.state.notiList.map((item, index) => {
             console.log(">>>> notification map - item: ", item)
             return <View style={{height: 100}}>
                 <Notification 

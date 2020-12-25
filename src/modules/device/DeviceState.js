@@ -1,9 +1,10 @@
 
 // Initial state
 const initialState = {
-  availableDeviceList: [
+  deviceList: [
     {
-      serialNumber: 'SFQIE1',
+      uuid: 'aaaaXXXX-6e7d-4601-bda2-bffaa68956ba',
+      serialNumber: '',
       battery: 40,
       lastSyncTime: '2020-11-09 14:20:10',
       isConnected: false,
@@ -12,6 +13,7 @@ const initialState = {
       childPhoto: '',
       userId: 1,      
     }, {
+      uuid: 'bbbbXXXX-6e7d-4601-bda2-bffaa68956ba',
       serialNumber: 'SFQIE2',
       battery: 40,
       lastSyncTime: '2020-11-10 14:20:10',
@@ -21,7 +23,8 @@ const initialState = {
       childPhoto: '',
       userId: 1,      
     }, {
-      serialNumber: 'SFQIE3',
+      uuid: 'ccccXXXX-6e7d-4601-bda2-bffaa68956ba',
+      serialNumber: '',
       battery: 40,
       lastSyncTime: '2020-11-11 14:20:10',
       isConnected: false,
@@ -30,7 +33,8 @@ const initialState = {
       childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
       userId: 1,   
     }, {
-      serialNumber: 'SFQIE4',
+      uuid: 'ddddXXXX-6e7d-4601-bda2-bffaa68956ba',
+      serialNumber: '',
       battery: 40,
       lastSyncTime: '2020-11-12 14:20:10',
       isConnected: false,
@@ -39,6 +43,7 @@ const initialState = {
       childPhoto: '',
       userId: 1,       
     }, {
+      uuid: 'eeeeXXXX-6e7d-4601-bda2-bffaa68956ba',
       serialNumber: 'SFQIE5',
       battery: 40,
       lastSyncTime: '2020-12-19 14:20:10',
@@ -48,7 +53,8 @@ const initialState = {
       childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
       userId: 1,      
     }, {
-      serialNumber: 'SFQIE6',
+      uuid: 'ffffXXXX-6e7d-4601-bda2-bffaa68956ba',
+      serialNumber: '',
       battery: 40,
       lastSyncTime: '2020-11-09 14:20:10',
       isConnected: false,
@@ -57,6 +63,7 @@ const initialState = {
       childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
       userId: 1,   
     }, {
+      uuid: 'ggggXXXX-6e7d-4601-bda2-bffaa68956ba',
       serialNumber: 'SFQIE7',
       battery: 40,
       lastSyncTime: '2020-11-09 14:20:10',
@@ -66,6 +73,7 @@ const initialState = {
       childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
       userId: 1,       
     }, {
+      uuid: 'hhhhXXXX-6e7d-4601-bda2-bffaa68956ba',
       serialNumber: 'SFQIE8',
       battery: 40,
       lastSyncTime: '2020-11-09 14:20:10',
@@ -76,7 +84,19 @@ const initialState = {
       userId: 1,      
     }
   ],
-  connectedIndex: 4,
+  curDevice: {
+    uuid: 'hhhhXXXX-6e7d-4601-bda2-bffaa68956ba',
+    serialNumber: 'SFQIE8',
+    battery: 40,
+    lastSyncTime: '2020-11-09 14:20:10',
+    isConnected: true,
+    childId: 0,
+    childName: '',
+    childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+    userId: 1,
+  },
+  selDevIndex: -1,
+  selUUID: ''
 }
 
 // Actions
@@ -84,7 +104,9 @@ const SET_DEVICE_LIST       = 'SET_DEVICE_LIST'
 const ADD_DEVICE            = 'ADD_DEVICE'
 const UPDATE_DEVICE         = 'UPDATE_DEVICE'
 const REMOVE_DEVICE         = 'REMOVE_DEVICE'
-const SET_CONNECTED_INDEX   = 'SET_CONNECTED_INDEX'
+const SET_SEL_DEV_INDEX     = 'SET_SEL_DEV_INDEX'
+const SET_CUR_DEVICE        = 'SET_CUR_DEVICE'
+const SET_SEL_UUID          = 'SET_SEL_UUID'
 
 // Action creators
 function setDeviceListAction(deviceList) {
@@ -99,12 +121,20 @@ function updateDeviceAction(device) {
   return { type: UPDATE_DEVICE , device}
 }
 
-function removeDeviceAction(serialNumber) {
-  return { type: REMOVE_DEVICE , serialNumber}
+function removeDeviceAction(uuid) {
+  return { type: REMOVE_DEVICE , uuid}
 }
 
-function setConnectedIndexAction(index) {
-  return { type: SET_CONNECTED_INDEX , index}
+function setSelDevIndexAction(selDevIndex) {
+  return { type: SET_SEL_DEV_INDEX , selDevIndex}
+}
+
+function setCurDeviceAction(curDevice) {
+  return { type: SET_CUR_DEVICE , curDevice}
+}
+
+function setSelUUIDAction(selUUID) {
+  return { type: SET_SEL_UUID , selUUID}
 }
 
 export function setDeviceList(deviceList) {
@@ -125,22 +155,44 @@ export function updateDevice(device) {
   }
 }
 
-export function removeDevice(serialNumber) {
+export function removeDevice(uuid) {
   return dispatch => {
-    dispatch(removeDeviceAction(serialNumber))
+    dispatch(removeDeviceAction(uuid))
   }
 }
 
-export function setConnectedIndex(index) {
+export function setSelDevIndex(selDevIndex) {
   return dispatch => {
-    dispatch(setConnectedIndexAction(index))
+    dispatch(setSelDevIndexAction(selDevIndex))
+  }
+}
+
+export function setCurDevice(curDevice) {
+  return dispatch => {
+    dispatch(setCurDeviceAction(curDevice))
+  }
+}
+
+export function setSelUUID(selUUID) {
+  return dispatch => {
+    dispatch(setSelUUIDAction(selUUID))
   }
 }
 
 // Reducer
 export default function DeviceStateReducer(state = initialState, action = {}) {
 
-  const isDevice = (element, serialNumber) => element.serialNumber = serialNumber
+  const getDeviceIndex = (uuid) => {
+    let index = -1
+    for (let i = 0; i < state.deviceList.length; i++) {
+      if (state.deviceList[i].uuid == uuid) {
+        index = i
+        break
+      }
+    }
+
+    return index
+  }
 
   switch (action.type) {
     case SET_DEVICE_LIST:
@@ -158,7 +210,7 @@ export default function DeviceStateReducer(state = initialState, action = {}) {
     case UPDATE_DEVICE:
       {
         let deviceList = state.deviceList
-        let index = deviceList.findIndex(isDevice, action.device.serialNumber)
+        let index = getDeviceIndex(action.device.uuid)
 
         if (index >= 0) {
           deviceList[index] = action.device
@@ -172,10 +224,10 @@ export default function DeviceStateReducer(state = initialState, action = {}) {
     case REMOVE_DEVICE:
       {
         let deviceList = state.deviceList
-        let index = deviceList.findIndex(isDevice, action.serialNumber)
+        let index = getDeviceIndex(action.uuid)
 
         if (index >= 0) {
-          deviceList.slice(index, 1)
+          deviceList.splice(index, 1)
         }
 
         return Object.assign({}, state, {
@@ -183,9 +235,19 @@ export default function DeviceStateReducer(state = initialState, action = {}) {
         })
       }
 
-    case SET_CONNECTED_INDEX:
+    case SET_SEL_DEV_INDEX:
       return Object.assign({}, state, {
-        connectedIndex: action.connectedIndex,
+        selDevIndex: action.selDevIndex,
+      })
+
+    case SET_CUR_DEVICE:
+      return Object.assign({}, state, {
+        curDevice: action.curDevice,
+      })
+
+    case SET_SEL_UUID:
+      return Object.assign({}, state, {
+        selUUID: action.selUUID,
       })
 
     default:

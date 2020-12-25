@@ -1,39 +1,230 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { compose } from 'recompose'
+
 import {
   StyleSheet,
   View,
-  Platform,
   Text,
-  FlatList,
   TouchableOpacity,
-  Image,
-  Dimensions,
+  Alert,
 } from 'react-native'
-import { colors, fonts } from '../../styles'
+import LinearGradient from 'react-native-linear-gradient'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { RadioGroup, GridRow } from '../../components'
+import { fonts, colors } from '../../styles'
+import {db} from '../Database'
+
+import HeadPanel from '../components/HeadPanel'
+
+import defaultAvatarImg from '../../../assets/images/icons/default-avatar.png'
+import {DEVICE_WIDTH, DEVICE_HEIGHT, HAED_PANEL_HEIGHT, BOTTOM_TAB_HEIGHT, INPUT_FIELD_HEIGHT} from '../Constant'
+
+import PickerImage from '../components/PickerImage'
+import InputFieldWithDevider from '../components/InputFieldWithDevider'
+import SelectFieldWithDevider from '../components/SelectFieldWithDevider'
+
+import { updateChild } from '../child/ChildState'
+import { updateDevice, removeDevice, setSelIndex } from './DeviceState'
+import { DEVICE_LIST_PAGE_NAME } from '../navigation/stackNavigationData'
+import TextFieldWithDevider from '../components/TextFieldWithDevider'
 
 class DeviceSettingScreen extends React.Component {
 
-  onAdd = () => {
+  constructor(props) {
+    super(props)
+    this.state = {
+      deviceInfo: {
+        uuid: this.props.selUUID,
+        serialNumber: '',
+        battery: NaN,
+        lastSyncTime: '',
+        lastNotification: '',
+        childId: 0,
+        isConnected: false,
+        userId: this.props.userInfo.id
+      },
+      selDevIndex: -1,
+      selChildId: -1,
+      deviceChildId: -1,
+      childList: []
+    }
 
+    console.log("DeviceSettingScreen constructor selDevUUID: ", this.props.selUUID)
+    console.log("DeviceSettingScreen constructor device List: ", this.props.deviceList)
   }
 
-  onSave = () => {
+  componentDidMount = async () => {
 
+    console.log("DeviceSettingScreen Component Did Mount")
+
+    let uuid = this.props.selUUID
+    this.props.deviceList.map((device, index) => {
+      if (device.uuid = uuid) {
+        this.setState({deviceInfo: device, selDevIndex: index})
+      }
+    })
+
+    console.log(">>> userInfo: ", this.props.userInfo)
+
+    let childNameIDList = await db.getChildIdNameList(this.props.userInfo.id)
+    console.log(">>> child list: ", childNameIDList)
+    let childList = []
+    let deviceChildId = -1
+    childNameIDList.map((child) => {
+      childList.push({label: child.name, value: child.id})
+      if (child.uuid == this.state.deviceInfo.uuid) {
+        deviceChildId = child.id
+      }
+    })
+
+    this.setState({childList: childList, deviceChildId, deviceChildId, selChildId: deviceChildId})
+
+  }  
+
+  onSave = async () => {
+
+    // let deviceInfo = this.state.deviceInfo
+    // let result = await db.updateChild(deviceInfo)
+    // console.log("save child result: ", result)
+    
+    // if (result.rowsAffected == 1) {
+    //   await this.props.updateChild(deviceInfo)
+
+    //   console.log("updated child list: ", this.props.childList)
+
+    //   Alert.alert(
+    //     'Success',
+    //     'The child info has been updated.',
+    //     [
+    //       { text: 'OK', onPress: () => {this.props.navigation.goBack()} }
+    //     ],
+    //     { cancelable: false }
+    //   )
+    // } else {
+
+    //   Alert.alert(
+    //     'Failed',
+    //     'Updating child info has failed.',
+    //     [
+    //       { text: 'OK', onPress: () => {} }
+    //     ],
+    //     { cancelable: false }
+    //   )
+    // }
   }
 
   onDelete = () => {
+    Alert.alert(
+      "Confirm",
+      "Are you sure to remove this device's information?",
+      [
+        {
+          text: "Yes",
+          onPress: async () => {
+            // go back
+            // this.props.navigation.goBack()
+          }
+        },
+        {
+          text: "No",
+          onPress: () => {
+            console.log("No Pressed")
+          },
+          style: "cancel"
+        },
+      ],
+      { cancelable: false }
+    )
+  }  
 
+  onChangeChildName = (value) => {
+    console.log("onchange name:", value)
+        // let deviceInfo = this.state.deviceInfo
+    // deviceInfo.name = value
+    this.setState({selChildId: value})
   }
 
   render() {
-    return (
+    return (      
       <View style={styles.container}>
         
+        <HeadPanel title={"CareO Setting"} onPress={() => {this.props.navigation.navigate(DEVICE_LIST_PAGE_NAME)}}/>
+
+        <KeyboardAwareScrollView
+          resetScrollToCoords={{ x: 0, y: 0 }}
+          scrollEnabled={true}
+          style={styles.container}>
+
+          <View style={styles.contentView}>
+            
+            <View flex={6} style={{marginTop: DEVICE_HEIGHT / 50, flexDirection: 'column', justifyContent: 'space-between'}}>
+
+              <TextFieldWithDevider
+                title="UUID"
+                value={this.state.deviceInfo.uuid}
+                style={{paddingTop: 3}}
+              />
+              <TextFieldWithDevider
+                title="Serial Number"
+                value={this.state.deviceInfo.serialNumber}
+              />
+              <TextFieldWithDevider
+                title="Battery"
+                value={this.state.deviceInfo.battery}
+              />
+              <TextFieldWithDevider
+                title="Last Sync Time"
+                value={this.state.deviceInfo.lastSyncTime}
+              />
+              <TextFieldWithDevider
+                title="Last Notification"
+                value={this.state.deviceInfo.lastNotification}
+              />
+              <SelectFieldWithDevider
+                title="Child Name"
+                value={this.state.selChildId}
+                items={this.state.childList}
+                onValueChange={(value, index) => this.onChangeChildName(value)}
+              />
+            </View>
+
+            <View flex={1} style={{marginTop: 50, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
+              <TouchableOpacity 
+                style={styles.buttonStyle}
+                onPress={() => this.onSave()}
+                activeOpacity={.5}
+              >
+                <LinearGradient
+                  colors={[ '#6FDE99', '#28A49B' ]}
+                  style={styles.linearGradient}
+                  start={{x: 0.4, y: 0}}
+                  end={{x: 0.4, y: 1.5}}
+                >
+                <Text style={styles.buttonText}>Save</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.buttonStyle}
+                onPress={() => this.onDelete()}
+                activeOpacity={.5}
+              >
+                <LinearGradient
+                  colors={[ '#FF9BA2', '#FA5865' ]}
+                  style={styles.linearGradient}
+                  start={{x: 0.4, y: 0}}
+                  end={{x: 0.4, y: 1.5}}
+                >
+                <Text style={styles.buttonText}>Delete</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+            
+          </View>
+        </KeyboardAwareScrollView>
       </View>
+
     )
   }
 }
@@ -41,13 +232,14 @@ class DeviceSettingScreen extends React.Component {
 export default compose(
   connect(
     state => ({
-      childList: state.child.childList,
-      selIndex: state.child.selIndex
+      deviceList: state.device.deviceList,
+      selUUID: state.device.selUUID,
+      userInfo: state.auth.userInfo
     }),
     dispatch => ({
-      addChild: (child) => dispatch(addChild(child)),
+      updateDevice: (device) => dispatch(updateDevice(device)),
       updateChild: (child) => dispatch(updateChild(child)),
-      removeChild: (childId) => dispatch(removeChild(childId)),
+      removeDevice: (uuid) => dispatch(removeDevice(uuid)),
     }),
   )
 )(DeviceSettingScreen)
@@ -56,141 +248,42 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+    // flexDirection: 'column',
   },
-  tabsContainer: {
-    alignSelf: 'stretch',
-    marginTop: 30,
+  contentView: {
+    flex:1, 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    height: (DEVICE_HEIGHT - HAED_PANEL_HEIGHT - BOTTOM_TAB_HEIGHT - 100),
+    width: '100%',
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 1,
+    // },
+    // shadowOpacity: .25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
+    
+    marginBottom: DEVICE_HEIGHT / 10
   },
-  itemOneContainer: {
-    flex: 1,
-    width: Dimensions.get('window').width / 2 - 40,
+  buttonStyle: {
+    height: 40, width: 100, 
+    alignItems: 'center', 
+    marginHorizontal: 30
   },
-  itemOneImageContainer: {
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  itemOneImage: {
-    height: 200,
-    width: Dimensions.get('window').width / 2 - 40,
-  },
-  itemOneTitle: {
-    fontFamily: fonts.primaryRegular,
-    fontSize: 15,
-  },
-  itemOneSubTitle: {
-    fontFamily: fonts.primaryRegular,
-    fontSize: 13,
-    color: '#B2B2B2',
-    marginVertical: 3,
-  },
-  itemOnePrice: {
-    fontFamily: fonts.primaryRegular,
-    fontSize: 15,
-  },
-  itemOneRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 10,
-  },
-  itemOneContent: {
-    marginTop: 5,
-    marginBottom: 10,
-  },
-  itemTwoContainer: {
-    paddingBottom: 10,
-    backgroundColor: 'white',
-    marginVertical: 5,
-  },
-  itemTwoContent: {
-    padding: 20,
-    position: 'relative',
-    marginHorizontal: Platform.OS === 'ios' ? -15 : 0,
-    height: 150,
-  },
-  itemTwoTitle: {
-    color: colors.white,
-    fontFamily: fonts.primaryBold,
-    fontSize: 20,
-  },
-  itemTwoSubTitle: {
-    color: colors.white,
-    fontFamily: fonts.primaryRegular,
-    fontSize: 15,
-    marginVertical: 5,
-  },
-  itemTwoPrice: {
-    color: colors.white,
-    fontFamily: fonts.primaryBold,
-    fontSize: 20,
-  },
-  itemTwoImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  itemTwoOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    backgroundColor: '#6271da',
-    opacity: 0.5,
-  },
-  itemThreeContainer: {
-    backgroundColor: 'white',
-  },
-  itemThreeSubContainer: {
-    flexDirection: 'row',
-    paddingVertical: 10,
-  },
-  itemThreeImage: {
-    height: 100,
-    width: 100,
-  },
-  itemThreeContent: {
-    flex: 1,
-    paddingLeft: 15,
-    justifyContent: 'space-between',
-  },
-  itemThreeBrand: {
-    fontFamily: fonts.primaryRegular,
-    fontSize: 14,
-    color: '#617ae1',
-  },
-  itemThreeTitle: {
-    fontFamily: fonts.primaryBold,
-    fontSize: 16,
-    color: '#5F5F5F',
-  },
-  itemThreeSubtitle: {
-    fontFamily: fonts.primaryRegular,
-    fontSize: 12,
-    color: '#a4a4a4',
-  },
-  itemThreeMetaContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  itemThreePrice: {
-    fontFamily: fonts.primaryRegular,
-    fontSize: 15,
-    color: '#5f5f5f',
-    textAlign: 'right',
-  },
-  itemThreeHr: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#e3e3e3',
-    marginRight: -15,
-  },
-  badge: {
-    backgroundColor: colors.secondary,
+  linearGradient: {
+    alignItems:'center', 
+    justifyContent:'center', 
     borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    width: 100,
+    height: '100%'
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    backgroundColor: 'transparent',
   },
 })
+
+
