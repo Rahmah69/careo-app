@@ -17,7 +17,7 @@ import passwordImg from '../../../assets/images/icons/password.png'
 import {DEVICE_WIDTH, DEVICE_HEIGHT, HAED_PANEL_HEIGHT, BOTTOM_TAB_HEIGHT} from '../Constant'
 import PickerImage from '../components/PickerImage'
 
-import { setIsLoggedIn, setUser } from './AuthState'
+import { setIsLoggedIn, setIsSignedUp, setUser } from './AuthState'
 import { setGestureEnable, setHeaderShown } from '../navigation/NavigationState'
 import { setChildList } from '../child/ChildState'
 import { setDeviceList } from '../device/DeviceState'
@@ -191,6 +191,7 @@ class UserProfileScreen extends React.Component {
 
   onLogOut = () => {
     this.props.setIsLoggedIn(false)
+    this.props.setIsSignedUp(false)
     this.props.setHeaderShown(false)
     this.props.setGestureEnable(false)
     this.props.setChildList([])
@@ -360,6 +361,7 @@ export default compose(
     dispatch => ({
       setUser: (userInfo) => dispatch(setUser(userInfo)),
       setIsLoggedIn: (isLoggedIn) => dispatch(setIsLoggedIn(isLoggedIn)),
+      setIsSignedUp: (isLoggedIn) => dispatch(setIsSignedUp(isLoggedIn)),
       setHeaderShown: (headerShown) => dispatch(setHeaderShown(headerShown)),
       setGestureEnable: (gestureEnable) => dispatch(setGestureEnable(gestureEnable)),
       setChildList: (childList) => dispatch(setChildList(childList)),

@@ -18,15 +18,18 @@ import LastNotificationList from './LastNotificationList'
 
 import {ChildNavigatorView, DeviceNavigatorView} from '../navigation/RootNavigation'
 import {MAIN_TAB_NAV_NAME, REGISTER_PAGE_NAME, CHILD_LIST_PAGE_NAME} from '../navigation/stackNavigationData'
+import { setIsSignedUp } from '../auth/AuthState'
 
 export default function HomeScreen(props/*, { isExtended, setIsExtended }*/) {
   
   const userInfo = useSelector(state => state.auth.userInfo)
   const isSignedUp = useSelector(state => state.auth.isSignedUp)
 
+
   console.log(" Home Screen Started...")
-  if (isSignedUp)
+  if (isSignedUp) {
     props.navigation.navigate('Bracelet')
+  }
 
   const dispatch = useDispatch()
   dispatch(setHeaderShown(false))

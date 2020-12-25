@@ -7,7 +7,7 @@ import {
 } from '@react-navigation/drawer'
 import RootNavigatorView from './RootNavigation'
 import { useSelector, useDispatch } from 'react-redux'
-import { setIsLoggedIn } from '../auth/AuthState'
+import { setIsLoggedIn, setIsSignedUp } from '../auth/AuthState'
 import { setChildList } from '../child/ChildState'
 import { setDeviceList } from '../device/DeviceState'
 import { setNotiList, setLastNotiList } from '../notification/NotificationState'
@@ -55,6 +55,7 @@ function CustomDrawerContent(props) {
 
   const logout = () => {    
     dispatch(setIsLoggedIn(false))
+    dispatch(setIsSignedUp(false))
     dispatch(setHeaderShown(false))
     dispatch(setGestureEnable(false))
     dispatch(setChildList([]))

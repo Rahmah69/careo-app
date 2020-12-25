@@ -33,14 +33,19 @@ export default class Database {
                   // tx.executeSql('DROP TABLE child')
                   // tx.executeSql('DROP TABLE device')
                   // tx.executeSql('DROP TABLE notification')
+
+                  // tx.executeSql('DELETE FROM device')
+                  // tx.executeSql('DELETE FROM notification')
+
                 })
 
+                // console.log("******* DROP or DELETE TABLE *******")
                 // return
 
                 db.executeSql('UPDATE user SET password="a" WHERE email="a"')
 
                 // check if user table exists, if not, create user table
-                db.executeSql('SELECT 1 FROM child LIMIT 1').then(() => {
+                db.executeSql('SELECT 1 FROM device LIMIT 1').then(() => {
                     console.log("Database is ready ... executing query ...")
                     resolve(db)
                 }).catch((error) =>{
@@ -280,20 +285,47 @@ export default class Database {
       })  
     }
 
+    getChild(childId) {
+      return new Promise((resolve) => {
+        this.initDB().then((db) => {
+          db.transaction((tx) => {
+            tx.executeSql(`SELECT id, name, age, blood_type AS bloodType, condition, relationship, image_path AS imagePath, uuid, user_id as userId
+                          FROM child 
+                          WHERE id = ?`, [childId]).then(([tx, results]) => {
+              console.log("get child query completed")
+              
+              var len = results.rows.length
+              if (len == 0) return null
+
+              let row = results.rows.item(0)
+              console.log(row)
+              resolve(row)
+            })
+          }).then((result) => {
+            this.closeDatabase(db)
+            
+          }).catch((err) => {
+            console.log(err)
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      })  
+    }
+
     getChildIdNameList(userId) {
       return new Promise((resolve) => {
         const idNameList = []
         this.initDB().then((db) => {
           db.transaction((tx) => {
-            tx.executeSql(`SELECT id, name FROM child WHERE user_id = ?`, [userId]).then(([tx, results]) => {
+            tx.executeSql(`SELECT id, name, uuid FROM child WHERE user_id = ?`, [userId]).then(([tx, results]) => {
               console.log("child id name list query completed")
               
               var len = results.rows.length
               for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i)
-                console.log(`Child Id: ${row.id}, Child Name: ${row.name}`)
-                const { id, name } = row
-                idNameList.push({ id, name })
+                const { id, name, uuid } = row
+                idNameList.push({ id, name, uuid })
               }
 
               console.log(idNameList)
@@ -363,8 +395,8 @@ export default class Database {
 
           let strCurDateTime = this.getCurrentDateTimeString()
           db.transaction((tx) => {
-            tx.executeSql(`UPDATE child SET uuid = ? WHERE id = ?`, 
-                            [uuid, child.id]).then(([tx, results]) => {
+            tx.executeSql(`UPDATE child SET uuid = ?, updated_at = ? WHERE id = ?`, 
+                            [uuid, strCurDateTime, childId]).then(([tx, results]) => {
               console.log("update child query with uuid completed")
               resolve(results)
             })
@@ -435,6 +467,39 @@ export default class Database {
       })  
     }
 
+    getDevice(uuid) {
+      return new Promise((resolve) => {
+        this.initDB().then((db) => {
+          db.transaction((tx) => {
+            tx.executeSql(`SELECT t1.uuid, t1.serial_number AS serialNumber, t1.battery, t1.last_sync_time AS lastSyncTime, 
+                            t1.is_connected AS isConnected, t2.id as childId, t2.name as childName, t2.image_path as childPhoto, t1.user_id as userId
+                          FROM device t1
+                          LEFT JOIN child t2 ON t1.uuid = t2.uuid
+                          WHERE t1.uuid = ?`, [uuid]).then(([tx, results]) => {
+              console.log("get device query completed")
+              
+              var len = results.rows.length
+              if (len == 0) {
+                resolve(null)
+
+              } else {
+                let device = results.rows.item(0)
+                console.log(device)
+                resolve(device)
+              }
+            })
+          }).then((result) => {
+            this.closeDatabase(db)
+            
+          }).catch((err) => {
+            console.log(err)
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      })  
+    }
+
     getDeviceIDList(userId) {
       return new Promise((resolve) => {
         const devices = []
@@ -467,9 +532,11 @@ export default class Database {
     }
 
     insertDevice(device) {
+      console.log(">>> before insert device: ", device)
       return new Promise((resolve) => {
         this.initDB().then((db) => {
 
+          console.log(">>> before insert device: ", device)
           let strCurDateTime = this.getCurrentDateTimeString()
           db.transaction((tx) => {
             tx.executeSql(`INSERT INTO device (uuid, serial_number, battery, last_sync_time, is_connected, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
@@ -522,6 +589,28 @@ export default class Database {
 
             tx.executeSql(`DELETE FROM device WHERE uuid = ?`, [uuid]).then(([tx, results]) => {
               console.log("delete device query completed")
+              resolve(results)
+            })
+          }).then((result) => {
+            this.closeDatabase(db)
+
+          }).catch((err) => {
+            console.log(err)
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      })  
+    }
+
+    deleteAllDevice(userId) {
+      return new Promise((resolve) => {
+        this.initDB().then((db) => {
+          db.transaction((tx) => {
+            // tx.executeSql(`UPDATE child SET uuid = "" WHERE user_id = ?`, [userId])
+
+            tx.executeSql(`DELETE FROM device WHERE user_id = ?`, [userId]).then(([tx, results]) => {
+              console.log("delete all device query completed")
               resolve(results)
             })
           }).then((result) => {
@@ -679,8 +768,36 @@ export default class Database {
         }).catch((err) => {
           console.log(err)
         })
-      })  
+      })
+    }
 
+    getLastNotificationByUUID(uuid) {
+      return new Promise((resolve) => {
+        this.initDB().then((db) => {
+          db.transaction((tx) => {
+            tx.executeSql(`SELECT content FROM notification WHERE uuid = ? ORDER BY time DESC LIMIT 1`, [uuid]).then(([tx, results]) => {
+              console.log("last notification by uuid query completed")
+              
+              if (results.rows.length == 0) {
+                console.log("no notification")
+                resolve("")
+
+              } else {
+                console.log("last notification: ", results.rows.item(0).content)
+                resolve(results.rows.item(0).content)
+              }
+
+            })
+          }).then((result) => {
+            this.closeDatabase(db)
+            
+          }).catch((err) => {
+            console.log(err)
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      }) 
     }
 }
 

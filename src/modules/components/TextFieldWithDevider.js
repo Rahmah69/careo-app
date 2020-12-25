@@ -6,11 +6,10 @@ export default function TextFieldWithDevider(props) {
 
     const inputStyle = props.style ? props.style : {}
     const style = props.style ? {...styles.input, ...inputStyle} : styles.input
-    console.log(">>> input style: ", style)
     return (
       <View style={styles.container}>
         <View style={{justifyContent: 'center', alignItems: 'flex-start'}}>
-          <Text style={props.style ? {...styles.input, ...inputStyle} : styles.input}>{props.value}</Text>
+          <Text style={props.style ? {...styles.input, ...inputStyle} : styles.input}>{props.value != null && props.value != 0 ? props.value.toString() : ""}</Text>
           <Text style={styles.title}>{props.title}</Text>
         </View>
         <View style={styles.devider}/>
@@ -26,7 +25,6 @@ const styles = StyleSheet.create({
     marginTop: DEVICE_HEIGHT / 40
   },
   input: {
-    // backgroundColor: '#AAA',
     width: (DEVICE_WIDTH - INPUT_FIELD_HORZ_MARGIN * 2),
     height: 50,
     marginHorizontal: INPUT_FIELD_HORZ_MARGIN,
@@ -34,7 +32,7 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 18,
     textAlign: 'right',
-    opacity: 0.5,
+    opacity: 0.8,
     paddingTop: DEVICE_HEIGHT / 60,
     textAlignVertical: 'center', 
     alignContent: 'center',

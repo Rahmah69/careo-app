@@ -24,8 +24,8 @@ import PickerImage from '../components/PickerImage'
 import InputFieldWithDevider from '../components/InputFieldWithDevider'
 import SelectFieldWithDevider from '../components/SelectFieldWithDevider'
 
-import { updateChild } from '../child/ChildState'
-import { updateDevice, removeDevice, setSelIndex } from './DeviceState'
+import { setChildList } from '../child/ChildState'
+import { setDeviceList } from './DeviceState'
 import { DEVICE_LIST_PAGE_NAME } from '../navigation/stackNavigationData'
 import TextFieldWithDevider from '../components/TextFieldWithDevider'
 
@@ -37,81 +37,122 @@ class DeviceSettingScreen extends React.Component {
       deviceInfo: {
         uuid: this.props.selUUID,
         serialNumber: '',
-        battery: NaN,
+        battery: 0,
         lastSyncTime: '',
-        lastNotification: '',
-        childId: 0,
         isConnected: false,
+        childId: 0,
+        childName: '',
+        childPhoto: '',
         userId: this.props.userInfo.id
       },
-      selDevIndex: -1,
-      selChildId: -1,
+      lastNotification: '',
+      isNewDevice: true,
+      originChildId: -1,
       deviceChildId: -1,
       childList: []
     }
 
     console.log("DeviceSettingScreen constructor selDevUUID: ", this.props.selUUID)
-    console.log("DeviceSettingScreen constructor device List: ", this.props.deviceList)
   }
 
   componentDidMount = async () => {
 
     console.log("DeviceSettingScreen Component Did Mount")
+    console.log("sel uuid: ", this.props.selUUID)
 
-    let uuid = this.props.selUUID
-    this.props.deviceList.map((device, index) => {
-      if (device.uuid = uuid) {
-        this.setState({deviceInfo: device, selDevIndex: index})
+    // the function for refresh when the page is focused.
+    this.onFocusPage = this.props.navigation.addListener('focus', async () => {
+      let uuid = this.props.selUUID
+
+      let device = await db.getDevice(uuid)
+      if (device != null) {
+        this.setState({deviceInfo: device, isNewDevice: false})
       }
+
+      console.log(">>> userInfo: ", this.props.userInfo)
+
+      let childNameIDList = await db.getChildIdNameList(this.props.userInfo.id)
+      console.log(">>> child list: ", childNameIDList)
+      let childList = []
+      let deviceChildId = -1
+      childNameIDList.map((child) => {
+        childList.push({label: child.name, value: child.id})
+        if (child.uuid == this.state.deviceInfo.uuid) {
+          deviceChildId = child.id
+        }
+      })
+
+      // get last notification content
+      let lastNotification = await db.getLastNotificationByUUID(uuid)
+      
+      console.log(">>> original child id: ", deviceChildId)
+      this.setState({
+        childList: childList, 
+        originChildId: deviceChildId, 
+        lastNotification: lastNotification
+      })
     })
-
-    console.log(">>> userInfo: ", this.props.userInfo)
-
-    let childNameIDList = await db.getChildIdNameList(this.props.userInfo.id)
-    console.log(">>> child list: ", childNameIDList)
-    let childList = []
-    let deviceChildId = -1
-    childNameIDList.map((child) => {
-      childList.push({label: child.name, value: child.id})
-      if (child.uuid == this.state.deviceInfo.uuid) {
-        deviceChildId = child.id
-      }
-    })
-
-    this.setState({childList: childList, deviceChildId, deviceChildId, selChildId: deviceChildId})
-
   }  
 
   onSave = async () => {
 
-    // let deviceInfo = this.state.deviceInfo
-    // let result = await db.updateChild(deviceInfo)
-    // console.log("save child result: ", result)
+    let deviceInfo = this.state.deviceInfo
+    let originChildId = this.state.originChildId
+    let newChildId = deviceInfo.childId != null && deviceInfo.childId > 0 ? deviceInfo.childId : -1
+
+    console.log(">>> original child id: ", originChildId)
+    console.log(">>> new child id: ", newChildId)
+
+    if (originChildId != newChildId) {
+      if (originChildId > 0) {
+        let result = await db.updateChildWithUUID(originChildId, "")
+        console.log(">>> remove uuid from original child id: ", result)
+      }
+
+      if (newChildId > 0) {
+        let result = await db.updateChildWithUUID(newChildId, deviceInfo.uuid)
+        console.log(">>> set uuid to new child id: ", result)
+
+        // get child information
+        let childInfo = await db.getChild(deviceInfo.childId)
+        deviceInfo.childName = childInfo.name
+        deviceInfo.childPhoto = childInfo.imagePath
+      }
+    }
+
     
-    // if (result.rowsAffected == 1) {
-    //   await this.props.updateChild(deviceInfo)
+    // if new device
+    if (this.state.isNewDevice) {
+      let result = await db.insertDevice(deviceInfo)
+      console.log(">>> device insert result: ", result)
 
-    //   console.log("updated child list: ", this.props.childList)
+      Alert.alert(
+        'Success',
+        'The device info has been added.',
+        [
+          { text: 'OK', onPress: () => {this.props.navigation.goBack()} }
+        ],
+        { cancelable: false }
+      )
 
-    //   Alert.alert(
-    //     'Success',
-    //     'The child info has been updated.',
-    //     [
-    //       { text: 'OK', onPress: () => {this.props.navigation.goBack()} }
-    //     ],
-    //     { cancelable: false }
-    //   )
-    // } else {
+    } else {
+      let result = await db.updateDevice(deviceInfo)
+      console.log(">>> device update result: ", result)
 
-    //   Alert.alert(
-    //     'Failed',
-    //     'Updating child info has failed.',
-    //     [
-    //       { text: 'OK', onPress: () => {} }
-    //     ],
-    //     { cancelable: false }
-    //   )
-    // }
+      Alert.alert(
+        'Success',
+        'The device info has been updated.',
+        [
+          { text: 'OK', onPress: () => {this.props.navigation.goBack()} }
+        ],
+        { cancelable: false }
+      )
+    }
+
+    // update the child list store
+    let listChild = await db.listChild(this.props.userInfo.id)
+    console.log(">>> after saving device, user list: ", listChild)
+    this.props.setChildList(listChild)
   }
 
   onDelete = () => {
@@ -122,8 +163,10 @@ class DeviceSettingScreen extends React.Component {
         {
           text: "Yes",
           onPress: async () => {
+            await db.deleteDevice(this.state.deviceInfo.uuid)
+            
             // go back
-            // this.props.navigation.goBack()
+            this.props.navigation.goBack()
           }
         },
         {
@@ -140,9 +183,9 @@ class DeviceSettingScreen extends React.Component {
 
   onChangeChildName = (value) => {
     console.log("onchange name:", value)
-        // let deviceInfo = this.state.deviceInfo
-    // deviceInfo.name = value
-    this.setState({selChildId: value})
+    let deviceInfo = this.state.deviceInfo
+    deviceInfo.childId = value
+    this.setState({deviceInfo: deviceInfo})
   }
 
   render() {
@@ -179,11 +222,11 @@ class DeviceSettingScreen extends React.Component {
               />
               <TextFieldWithDevider
                 title="Last Notification"
-                value={this.state.deviceInfo.lastNotification}
+                value={this.state.lastNotification}
               />
               <SelectFieldWithDevider
                 title="Child Name"
-                value={this.state.selChildId}
+                value={this.state.deviceInfo.childId}
                 items={this.state.childList}
                 onValueChange={(value, index) => this.onChangeChildName(value)}
               />
@@ -232,14 +275,11 @@ class DeviceSettingScreen extends React.Component {
 export default compose(
   connect(
     state => ({
-      deviceList: state.device.deviceList,
       selUUID: state.device.selUUID,
       userInfo: state.auth.userInfo
     }),
     dispatch => ({
-      updateDevice: (device) => dispatch(updateDevice(device)),
-      updateChild: (child) => dispatch(updateChild(child)),
-      removeDevice: (uuid) => dispatch(removeDevice(uuid)),
+      setChildList: (childList) => dispatch(setChildList(childList)),
     }),
   )
 )(DeviceSettingScreen)

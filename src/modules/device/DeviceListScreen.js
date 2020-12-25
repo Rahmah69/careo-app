@@ -27,13 +27,13 @@ class DeviceListScreen extends React.Component {
     this.state = {
       availDevList: [
         {uuid: 'aaaaXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png'},
-        {uuid: 'bbbbXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '2FUWIF', childName: '', childPhoto: ''},
+        {uuid: 'bbbbXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE2', childName: '', childPhoto: ''},
         {uuid: 'ccccXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png'},
         {uuid: 'ddddXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childName: '', childPhoto: ''},
-        {uuid: 'eeeeXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '5FUWIF', childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png'},
+        {uuid: 'eeeeXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE5', childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png'},
         {uuid: 'ffffXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childName: '', childPhoto: ''},
-        {uuid: 'ggggXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '7FUWIF', childName: '', childPhoto: ''},
-        {uuid: 'hhhhXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '8FUWIF', childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png'},
+        {uuid: 'ggggXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE7', childName: '', childPhoto: ''},
+        {uuid: 'hhhhXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE8', childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png'},
       ],
       curDevice: this.props.curDevice,
       // curDevice: null
@@ -51,7 +51,7 @@ class DeviceListScreen extends React.Component {
   }
 
   onScan = () => {
-
+    
   } 
 
   onConnect = () => {
@@ -111,9 +111,7 @@ class DeviceListScreen extends React.Component {
   }
 
   renderConnectedCareOItem = (item) => {
-    console.log("CARD_TEXT_WIDTH: ", CARD_TEXT_WIDTH)
 
-    console.log("renderConnectedCareOItem")
     let content = item.uuid
     if (item.serialNumber != null && item.serialNumber != '')
       content = item.serialNumber

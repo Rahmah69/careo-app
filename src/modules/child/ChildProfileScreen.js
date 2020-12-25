@@ -25,38 +25,23 @@ import PickerImage from '../components/PickerImage'
 import InputFieldWithDevider from '../components/InputFieldWithDevider'
 import SelectFieldWithDevider from '../components/SelectFieldWithDevider'
 
-import { addChild, updateChild, removeChild } from './ChildState'
+import { removeChild, setChildList } from './ChildState'
 
 class ChildProfileScreen extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      childInfo: 
-        this.props.selChildIndex != -1 
-        ? JSON.parse(JSON.stringify(this.props.childList[this.props.selChildIndex])) 
-        : {
-          id: -1, name: '', imagePath: '', age: 0, bloodType: '', condition: '', relationship: '', uuid: '', serialNumber: '', userId: this.props.userInfo.id
-        },
+      childInfo: {
+        id: -1, name: '', imagePath: '', age: 0, bloodType: '', condition: '', relationship: '', uuid: '', serialNumber: '', userId: this.props.userInfo.id
+      },
+      originUUID: '',
       showPass: true,
       confirm: '',
       isNameEditing: false,
-      uuidSerialNumList:[
-        { uuid: 'adabXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '1FU2303'},
-        { uuid: '2f234454-cf6d-4a0f-adf2-f4911ba9ffa6', serialNumber: '' },
-        { uuid: 'f7826da6-4fa2-4e98-8024-bc5b71e0893e', serialNumber: '1FU4209'}
-      ],
-      uuidList: [
-        // { label: '', value: ''},
-        { label: 'adabXXXX-6e7d-4601-bda2-bffaa68956ba', value: 'adabXXXX-6e7d-4601-bda2-bffaa68956ba'},
-        { label: '2f234454-cf6d-4a0f-adf2-f4911ba9ffa6', value: '2f234454-cf6d-4a0f-adf2-f4911ba9ffa6'},
-        { label: 'f7826da6-4fa2-4e98-8024-bc5b71e0893e', value: 'f7826da6-4fa2-4e98-8024-bc5b71e0893e'},
-      ],
-      serialNumList: [
-        // { label: '', value: ''},
-        { label: '1FU2303', value: '1FU2303'},
-        { label: '1FU4209', value: '1FU4209'},
-      ]
+      uuidSerialNumList:[],
+      uuidItemList: [],
+      serialNumItemList: [],
     }
 
     console.log("Child Profile sel index: ", this.props.selChildIndex)
@@ -64,40 +49,82 @@ class ChildProfileScreen extends React.Component {
   }
 
   componentDidMount = async () => {
+
     if (this.props.selChildIndex == -1) {
       this.setState({isNameEditing: true})
       this.nameInputField.focus()
     }
 
-    // get device id list from db
-    /*
-    let uuidSerialNumList = await db.getDeviceIDList()
-    console.log(">>> Child Profile Component Did Mount: ", uuidSerialNumList)
-    let uuidList = [], serialNumList = []
-    for (let deviceIdInfo of uuidSerialNumList) {
-      if (!uuidList.includes(deviceIdInfo.uuid))
-        uuidList.push(deviceIdInfo.uuid)
+    // the function for refresh when the page is focused.
+    this.onFocusPage = this.props.navigation.addListener('focus', async () => {
 
-      if (!serialNumList.includes(deviceIdInfo.serialNumber))
-        serialNumList.push(deviceIdInfo.serialNumber)
+      if (this.props.selChildIndex != -1) {
+        let childInfo = JSON.parse(JSON.stringify(this.props.childList[this.props.selChildIndex]))
+        let originUUID = this.props.childList[this.props.selChildIndex].uuid
 
+        this.setState({childInfo: childInfo, originUUID: originUUID})
+      }
+
+      // get device id list from db      
+      let uuidSerialNumList = await db.getDeviceIDList(this.props.userInfo.id)
+      console.log(">>> Child Profile Component Focus: ", uuidSerialNumList)
+      let uuidList = [], serialNumList = []
+      for (let deviceIdInfo of uuidSerialNumList) {
+        if (!uuidList.includes(deviceIdInfo.uuid))
+          uuidList.push(deviceIdInfo.uuid)
+
+        if (deviceIdInfo.serialNumber != "" && !serialNumList.includes(deviceIdInfo.serialNumber))
+          serialNumList.push(deviceIdInfo.serialNumber)
+
+      }
+
+      uuidList.sort()
+      serialNumList.sort()
+      console.log(">>> uuid list: ", uuidList)
+      console.log(">>> serial number list: ", serialNumList)
+
+      let uuidItemList = [], serialNumItemList = []
+      for (let uuid of uuidList) {
+        uuidItemList.push({label: uuid, value: uuid})
+      }
+      for (let serialNum of serialNumList) {
+        serialNumItemList.push({label: serialNum, value: serialNum})
+      }
+      console.log(">>> uuid list: ", uuidList)
+      console.log(">>> serial number list: ", serialNumList)
+
+      this.setState({uuidSerialNumList: uuidSerialNumList, uuidItemList: uuidItemList, serialNumItemList: serialNumItemList}) 
+    })
+  }
+
+  // update the origin child for new uuid
+  updateOriginChildForNewUUID = async () => {
+    let originUUID = this.state.originUUID != null ? this.state.originUUID : ''
+    let newUUID = this.state.childInfo.uuid != null ? this.state.childInfo.uuid : ''
+
+    console.log(">>> origin uuid: ", originUUID)
+    console.log(">>> new uuid: ", newUUID)
+    if (originUUID != newUUID && newUUID != '') {
+
+      // find the child for originUUID
+      let child = null
+      for (let item of this.props.childList) {
+        if (this.state.childInfo.id != item.id && item.uuid == newUUID) {
+          child = item
+          break
+        }
+      }
+
+      // if the child exists, update child with uuid ''
+      if (child != null) {
+
+        console.log(">>> child: ", child)
+        await db.updateChildWithUUID(child.id, '')
+      } else {
+
+        console.log(">>> no child with new uuid ")
+      }
     }
-
-    uuidList.sort()
-    serialNumList.sort()
-
-    // uuidList.splice(0, 0, '')
-    // serialNumList.splice(0, 0, '')
-
-    let uuidItemList = [], serialNumItemList = []
-    for (let uuid of uuidList) {
-      uuidItemList.push({label: uuid, value: uuid})
-    }
-    for (let serialNum of serialNumList) {
-      serialNumItemList.push({label: serialNum, value: serialNum})
-    }
-
-    this.setState({uuidSerialNumList: uuidSerialNumList, uuidList: uuidList, serialNumList: serialNumList}) */
   }
 
   onAdd = async () => {
@@ -109,10 +136,6 @@ class ChildProfileScreen extends React.Component {
     console.log("add child result: ", result)
     
     if (result.rowsAffected == 1) {
-      childInfo.id = result.insertId
-      this.props.addChild(this.state.childInfo)
-
-      this.setState({childInfo: childInfo})
       Alert.alert(
         'Success',
         'The child info has been added.',
@@ -121,6 +144,12 @@ class ChildProfileScreen extends React.Component {
         ],
         { cancelable: false }
       )
+      
+      // update the origin child with new uuid
+      await this.updateOriginChildForNewUUID()
+
+      let childList = await db.listChild(this.props.userInfo.id)
+      this.props.setChildList(childList)
 
     } else {
 
@@ -145,8 +174,6 @@ class ChildProfileScreen extends React.Component {
     console.log("save child result: ", result)
     
     if (result.rowsAffected == 1) {
-      await this.props.updateChild(childInfo)
-
       console.log("updated child list: ", this.props.childList)
 
       Alert.alert(
@@ -157,6 +184,13 @@ class ChildProfileScreen extends React.Component {
         ],
         { cancelable: false }
       )
+      
+      // update the origin child with new uuid
+      await this.updateOriginChildForNewUUID()
+
+      let childList = await db.listChild(this.props.userInfo.id)
+      this.props.setChildList(childList)
+
     } else {
 
       Alert.alert(
@@ -437,7 +471,7 @@ class ChildProfileScreen extends React.Component {
               <SelectFieldWithDevider
                 title="Serial Number"
                 value={this.state.childInfo.serialNumber}
-                items={this.state.serialNumList}
+                items={this.state.serialNumItemList}
                 onValueChange={(value, index) => this.onChangeSerialNumber(value)}
                 onDonePress={this.onCloseSerialNumPicker}
                 onClose={this.onCloseSerialNumPicker}
@@ -445,7 +479,7 @@ class ChildProfileScreen extends React.Component {
               <SelectFieldWithDevider
                 title="UUID"
                 value={this.state.childInfo.uuid}
-                items={this.state.uuidList}
+                items={this.state.uuidItemList}
                 onValueChange={(value, index) => this.onChangeUUID(value)}
                 onDonePress={this.onCloseUUIDPicker}
                 onClose={this.onCloseUUIDPicker}
@@ -519,8 +553,7 @@ export default compose(
       userInfo: state.auth.userInfo
     }),
     dispatch => ({
-      addChild: (child) => dispatch(addChild(child)),
-      updateChild: (child) => dispatch(updateChild(child)),
+      setChildList: (childList) => dispatch(setChildList(childList)),
       removeChild: (childId) => dispatch(removeChild(childId)),
     }),
   )

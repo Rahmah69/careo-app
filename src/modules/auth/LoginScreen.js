@@ -32,6 +32,96 @@ class LoginScreen extends Component {
   }
 
   componentDidMount = async () => {
+
+    let deviceList = [
+      {
+        uuid: 'aaaaXXXX-6e7d-4601-bda2-bffaa68956ba',
+        serialNumber: '',
+        battery: 40,
+        lastSyncTime: '2020-11-09 14:20:10',
+        isConnected: false,
+        childId: 0,
+        childName: '',
+        childPhoto: '',
+        userId: 1,      
+      }, {
+        uuid: 'bbbbXXXX-6e7d-4601-bda2-bffaa68956ba',
+        serialNumber: 'SFQIE2',
+        battery: 40,
+        lastSyncTime: '2020-11-10 14:20:10',
+        isConnected: false,
+        childId: 0,
+        childName: '',
+        childPhoto: '',
+        userId: 1,      
+      }, {
+        uuid: 'ccccXXXX-6e7d-4601-bda2-bffaa68956ba',
+        serialNumber: '',
+        battery: 40,
+        lastSyncTime: '2020-11-11 14:20:10',
+        isConnected: false,
+        childId: 0,
+        childName: '',
+        childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+        userId: 1,   
+      }, {
+        uuid: 'ddddXXXX-6e7d-4601-bda2-bffaa68956ba',
+        serialNumber: '',
+        battery: 40,
+        lastSyncTime: '2020-11-12 14:20:10',
+        isConnected: false,
+        childId: 0,
+        childName: '',
+        childPhoto: '',
+        userId: 1,       
+      }, {
+        uuid: 'eeeeXXXX-6e7d-4601-bda2-bffaa68956ba',
+        serialNumber: 'SFQIE5',
+        battery: 40,
+        lastSyncTime: '2020-12-19 14:20:10',
+        isConnected: true,
+        childId: 1,
+        childName: 'Milian',
+        childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+        userId: 1,      
+      }, {
+        uuid: 'ffffXXXX-6e7d-4601-bda2-bffaa68956ba',
+        serialNumber: '',
+        battery: 40,
+        lastSyncTime: '2020-11-09 14:20:10',
+        isConnected: false,
+        childId: 0,
+        childName: '',
+        childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+        userId: 1,   
+      }, {
+        uuid: 'ggggXXXX-6e7d-4601-bda2-bffaa68956ba',
+        serialNumber: 'SFQIE7',
+        battery: 40,
+        lastSyncTime: '2020-11-09 14:20:10',
+        isConnected: false,
+        childId: 0,
+        childName: '',
+        childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+        userId: 1,       
+      }, {
+        uuid: 'hhhhXXXX-6e7d-4601-bda2-bffaa68956ba',
+        serialNumber: 'SFQIE8',
+        battery: 40,
+        lastSyncTime: '2020-11-09 14:20:10',
+        isConnected: false,
+        childId: 0,
+        childName: '',
+        childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+        userId: 1,      
+      }
+    ]
+
+    await db.deleteAllDevice(1)
+
+    for (let device of deviceList) {
+      await db.insertDevice(device)
+    }
     
     let users = await db.listUser()
     console.log(">>> login compoment did mount - users: ", users)
@@ -150,7 +240,7 @@ class LoginScreen extends Component {
     console.log(">>> initial lastNotiList: ", lastNotiList)
 
     this.props.setChildList(childList)
-    // this.props.setDeviceList(deviceList)
+    this.props.setDeviceList(deviceList)
     // this.props.setNotiList(notiList)
     // this.props.setLastNotiList(lastNotiList)
 

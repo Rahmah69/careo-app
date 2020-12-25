@@ -1,89 +1,90 @@
 
 // Initial state
 const initialState = {
-  deviceList: [
-    {
-      uuid: 'aaaaXXXX-6e7d-4601-bda2-bffaa68956ba',
-      serialNumber: '',
-      battery: 40,
-      lastSyncTime: '2020-11-09 14:20:10',
-      isConnected: false,
-      childId: 0,
-      childName: '',
-      childPhoto: '',
-      userId: 1,      
-    }, {
-      uuid: 'bbbbXXXX-6e7d-4601-bda2-bffaa68956ba',
-      serialNumber: 'SFQIE2',
-      battery: 40,
-      lastSyncTime: '2020-11-10 14:20:10',
-      isConnected: false,
-      childId: 0,
-      childName: '',
-      childPhoto: '',
-      userId: 1,      
-    }, {
-      uuid: 'ccccXXXX-6e7d-4601-bda2-bffaa68956ba',
-      serialNumber: '',
-      battery: 40,
-      lastSyncTime: '2020-11-11 14:20:10',
-      isConnected: false,
-      childId: 0,
-      childName: '',
-      childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
-      userId: 1,   
-    }, {
-      uuid: 'ddddXXXX-6e7d-4601-bda2-bffaa68956ba',
-      serialNumber: '',
-      battery: 40,
-      lastSyncTime: '2020-11-12 14:20:10',
-      isConnected: false,
-      childId: 0,
-      childName: '',
-      childPhoto: '',
-      userId: 1,       
-    }, {
-      uuid: 'eeeeXXXX-6e7d-4601-bda2-bffaa68956ba',
-      serialNumber: 'SFQIE5',
-      battery: 40,
-      lastSyncTime: '2020-12-19 14:20:10',
-      isConnected: true,
-      childId: 1,
-      childName: 'Milian',
-      childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
-      userId: 1,      
-    }, {
-      uuid: 'ffffXXXX-6e7d-4601-bda2-bffaa68956ba',
-      serialNumber: '',
-      battery: 40,
-      lastSyncTime: '2020-11-09 14:20:10',
-      isConnected: false,
-      childId: 0,
-      childName: '',
-      childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
-      userId: 1,   
-    }, {
-      uuid: 'ggggXXXX-6e7d-4601-bda2-bffaa68956ba',
-      serialNumber: 'SFQIE7',
-      battery: 40,
-      lastSyncTime: '2020-11-09 14:20:10',
-      isConnected: false,
-      childId: 0,
-      childName: '',
-      childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
-      userId: 1,       
-    }, {
-      uuid: 'hhhhXXXX-6e7d-4601-bda2-bffaa68956ba',
-      serialNumber: 'SFQIE8',
-      battery: 40,
-      lastSyncTime: '2020-11-09 14:20:10',
-      isConnected: false,
-      childId: 0,
-      childName: '',
-      childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
-      userId: 1,      
-    }
-  ],
+  deviceList: [],
+  // deviceList: [
+  //   {
+  //     uuid: 'aaaaXXXX-6e7d-4601-bda2-bffaa68956ba',
+  //     serialNumber: '',
+  //     battery: 40,
+  //     lastSyncTime: '2020-11-09 14:20:10',
+  //     isConnected: false,
+  //     childId: 0,
+  //     childName: '',
+  //     childPhoto: '',
+  //     userId: 1,      
+  //   }, {
+  //     uuid: 'bbbbXXXX-6e7d-4601-bda2-bffaa68956ba',
+  //     serialNumber: 'SFQIE2',
+  //     battery: 40,
+  //     lastSyncTime: '2020-11-10 14:20:10',
+  //     isConnected: false,
+  //     childId: 0,
+  //     childName: '',
+  //     childPhoto: '',
+  //     userId: 1,      
+  //   }, {
+  //     uuid: 'ccccXXXX-6e7d-4601-bda2-bffaa68956ba',
+  //     serialNumber: '',
+  //     battery: 40,
+  //     lastSyncTime: '2020-11-11 14:20:10',
+  //     isConnected: false,
+  //     childId: 0,
+  //     childName: '',
+  //     childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+  //     userId: 1,   
+  //   }, {
+  //     uuid: 'ddddXXXX-6e7d-4601-bda2-bffaa68956ba',
+  //     serialNumber: '',
+  //     battery: 40,
+  //     lastSyncTime: '2020-11-12 14:20:10',
+  //     isConnected: false,
+  //     childId: 0,
+  //     childName: '',
+  //     childPhoto: '',
+  //     userId: 1,       
+  //   }, {
+  //     uuid: 'eeeeXXXX-6e7d-4601-bda2-bffaa68956ba',
+  //     serialNumber: 'SFQIE5',
+  //     battery: 40,
+  //     lastSyncTime: '2020-12-19 14:20:10',
+  //     isConnected: true,
+  //     childId: 1,
+  //     childName: 'Milian',
+  //     childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+  //     userId: 1,      
+  //   }, {
+  //     uuid: 'ffffXXXX-6e7d-4601-bda2-bffaa68956ba',
+  //     serialNumber: '',
+  //     battery: 40,
+  //     lastSyncTime: '2020-11-09 14:20:10',
+  //     isConnected: false,
+  //     childId: 0,
+  //     childName: '',
+  //     childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+  //     userId: 1,   
+  //   }, {
+  //     uuid: 'ggggXXXX-6e7d-4601-bda2-bffaa68956ba',
+  //     serialNumber: 'SFQIE7',
+  //     battery: 40,
+  //     lastSyncTime: '2020-11-09 14:20:10',
+  //     isConnected: false,
+  //     childId: 0,
+  //     childName: '',
+  //     childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+  //     userId: 1,       
+  //   }, {
+  //     uuid: 'hhhhXXXX-6e7d-4601-bda2-bffaa68956ba',
+  //     serialNumber: 'SFQIE8',
+  //     battery: 40,
+  //     lastSyncTime: '2020-11-09 14:20:10',
+  //     isConnected: false,
+  //     childId: 0,
+  //     childName: '',
+  //     childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+  //     userId: 1,      
+  //   }
+  // ],
   curDevice: {
     uuid: 'hhhhXXXX-6e7d-4601-bda2-bffaa68956ba',
     serialNumber: 'SFQIE8',
@@ -201,11 +202,14 @@ export default function DeviceStateReducer(state = initialState, action = {}) {
       })
 
     case ADD_DEVICE:
-      deviceList.push(action.device)
+      {
+        let deviceList = state.deviceList
+        deviceList.push(action.device)
 
-      return Object.assign({}, state, {
-        deviceList: deviceList,
-      })
+        return Object.assign({}, state, {
+          deviceList: deviceList,
+        })
+      }
 
     case UPDATE_DEVICE:
       {

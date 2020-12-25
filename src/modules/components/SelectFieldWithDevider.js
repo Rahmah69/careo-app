@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
     textAlign: 'left'
   },
   input: {
-    backgroundColor: 'white',
     width: DEVICE_WIDTH - INPUT_FIELD_HORZ_MARGIN * 2,
     height: INPUT_FIELD_HEIGHT,
     marginHorizontal: INPUT_FIELD_HORZ_MARGIN,
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 20,
     textAlign: 'right',
-    opacity: 0.5
+    opacity: 0.8
   },
   devider: {
     borderBottomColor: '#AAA', 

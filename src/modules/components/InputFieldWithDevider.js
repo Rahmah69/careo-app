@@ -17,7 +17,7 @@ export default function InputFieldWithDevider(props) {
             underlineColorAndroid="transparent"
             multiline={false}
             numberOfLines={2}
-            value={props.value.toString()}
+            value={props.value != null && props.value != 0 ? props.value.toString() : ""}
             disable={props.disable ? true : false}
             onChangeText={(value) => {if (props.onChangeText != null) props.onChangeText(value)}}
             onBlur={(ev) => {if (props.onBlur != null) props.onBlur(ev)}}
@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
     marginTop: DEVICE_HEIGHT / 40
   },
   input: {
-    backgroundColor: '#AAA',
     width: (DEVICE_WIDTH - INPUT_FIELD_HORZ_MARGIN * 2),
     height: 50,
     marginHorizontal: INPUT_FIELD_HORZ_MARGIN,
@@ -45,7 +44,7 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 20,
     textAlign: 'right',
-    opacity: 0.5,
+    opacity: 0.8,
     paddingTop: -10,
     textAlignVertical: 'center'
   },

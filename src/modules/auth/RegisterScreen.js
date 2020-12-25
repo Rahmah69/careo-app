@@ -168,7 +168,7 @@ class RegisterScreen extends Component {
 
     console.log(userInfo)
 
-    userInfo = result.insertId
+    userInfo.id = result.insertId
 
     // save the user info into the store
     await this.props.setUser(userInfo)
