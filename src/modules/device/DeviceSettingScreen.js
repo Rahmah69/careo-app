@@ -163,8 +163,13 @@ class DeviceSettingScreen extends React.Component {
         {
           text: "Yes",
           onPress: async () => {
+            if (this.state.deviceInfo.isConnected) {
+              // stop ble connection
+              
+            }
+
             await db.deleteDevice(this.state.deviceInfo.uuid)
-            
+
             // go back
             this.props.navigation.goBack()
           }

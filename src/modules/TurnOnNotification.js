@@ -11,6 +11,8 @@ import NotificationSetting from 'react-native-open-notification'
 // import PushNotification from "react-native-push-notification"
 var PushNotification = require("react-native-push-notification")
 
+import {notificationManager} from './notification/NotificationManager'
+
 export default class TurnOnNotification extends Component {
   constructor(props){
     super(props)
@@ -35,12 +37,32 @@ export default class TurnOnNotification extends Component {
         console.log(e);
     })
 
+     
+    // setInterval(() => {
+    //     this.notification()
+    //   }, 10 * 1000)
+
     // PushNotification.localNotificationSchedule({
     //     //... You can use all the options from localNotifications
     //     message: "My Notification Message", // (required)
     //     date: new Date(Date.now() + 10 * 1000), // in 60 secs
     //     allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
     // });
+  }
+
+  notification = () => {
+    const options = {
+        soundName: 'default',
+        playSound: true,
+        vibrate: true
+    }
+    notificationManager.showNotification(
+        1,
+        "App Notification",
+        "Local Notification",
+        {}, // data
+        options  // options
+    )
   }
 
   onTurnOnNotification = async () => {

@@ -11,12 +11,13 @@ import {
   Image,
 } from 'react-native'
 import { colors, fonts } from '../../styles'
+import {db} from '../Database'
 
 import batteryImg from "../../../assets/images/icons/battery.png"
 
 import HeadPanel from '../components/HeadPanel'
 import LinearGradient from 'react-native-linear-gradient'
-import { addDevice, updateDevice, removeDevice, setSelDevIndex, setCurDevice, setSelUUID } from './DeviceState'
+import { setSelUUID } from './DeviceState'
 import { BOTTOM_TAB_HEIGHT, DEVICE_HEIGHT, DEVICE_WIDTH, HAED_PANEL_HEIGHT } from '../Constant'
 import { DEVICE_SETTING_PAGE_NAME } from '../navigation/stackNavigationData'
 
@@ -33,7 +34,6 @@ class DeviceListScreen extends React.Component {
         {uuid: 'eeeeXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE5', childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png'},
         {uuid: 'ffffXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childName: '', childPhoto: ''},
         {uuid: 'ggggXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE7', childName: '', childPhoto: ''},
-        {uuid: 'hhhhXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE8', childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png'},
       ],
       curDevice: this.props.curDevice,
       // curDevice: null
@@ -45,13 +45,34 @@ class DeviceListScreen extends React.Component {
 
     this.onFocusPage = this.props.navigation.addListener('focus', async () => {
       console.log(">>> device list page focus / cur device: ", this.state.curDevice)
-      await this.setState({deviceList: this.props.deviceList})
       this.onScan()
     })
   }
 
-  onScan = () => {
-    
+  onScan = async () => {
+    let curDevice = null
+    let availDevList = []
+    let deviceList = await db.listDevice(this.props.userInfo.id)
+
+    console.log("on Scan dev list: ", deviceList)
+    for (let device of deviceList) {
+      let availDev = {
+        uuid: device.uuid,
+        serialNumber: device.serialNumber,
+        childName: device.childName,
+        childPhoto: device.childPhoto
+      }
+
+      if (device.isConnected == 1)
+        curDevice = availDev
+      else
+        availDevList.push(availDev)
+    }
+
+    console.log("availDevlist: ", availDevList)
+    console.log("curDevice: ", curDevice)
+
+    this.setState({availDevList: availDevList, curDevice: curDevice})
   } 
 
   onConnect = () => {
@@ -62,7 +83,7 @@ class DeviceListScreen extends React.Component {
     console.log("onViewDevice / uuid: ", uuid)
 
     await this.props.setSelUUID(uuid)
-    console.log("onViewDevice / props selDevIndex: ", this.props.selUUID)
+    console.log("onViewDevice / props selUUID: ", this.props.selUUID)
     this.props.navigation.navigate(DEVICE_SETTING_PAGE_NAME)
   }
 
@@ -121,7 +142,7 @@ class DeviceListScreen extends React.Component {
     return (
       <View style={{height: 100, marginTop: 20}}>
         <Text style={{marginLeft: 20, color: '#125171', fontSize: 16, fontWeight: 'bold', }}>Connected CareO</Text>
-        <TouchableOpacity style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={() => {this.onViewDevice(item.uuid)}}>
           <View style={styles.cardImageSection}>
             <Image source={{url: item.childPhoto}} style={styles.cardImage}/>
           </View>
@@ -134,7 +155,7 @@ class DeviceListScreen extends React.Component {
                 <Image style={{flex: 1, height: 45, resizeMode: 'stretch'}} source={batteryImg}/>
               </View>
               <Text style={{flex: 1, fontSize: 11, textAlign: 'center', textAlignVertical: 'bottom', color: '#1C9E9C', position: 'relative'}}>
-                {item.battery != null ? item.battery + '%' : 'NaN'}
+                {item.battery != null ? item.battery.toString() + '%' : 'NaN'}
               </Text>  
             </View>
           </View>
@@ -190,16 +211,10 @@ class DeviceListScreen extends React.Component {
 export default compose(
   connect(
     state => ({
-      deviceList: state.device.deviceList,
-      selDevIndex: state.device.selDevIndex,
       curDevice: state.device.curDevice,
+      userInfo: state.auth.userInfo,
     }),
     dispatch => ({
-      addDevice: (device) => dispatch(addDevice(device)),
-      updateDevice: (device) => dispatch(updateDevice(device)),
-      removeDevice: (uuid) => dispatch(removeDevice(uuid)),
-      setSelDevIndex: (selDevIndex) => dispatch(setSelDevIndex(selDevIndex)),
-      setCurDevice: (curDevice) => dispatch(setCurDevice(curDevice)),
       setSelUUID: (selUUID) => dispatch(setSelUUID(selUUID)),
     }),
   )

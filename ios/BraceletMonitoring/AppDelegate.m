@@ -5,6 +5,8 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <UserNotifications/UserNotifications.h>
+
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -53,6 +55,15 @@ static void InitializeFlipper(UIApplication *application) {
   return YES;
 }
 
+- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+{
+#if DEBUG
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+#else
+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+#endif
+}
+
 // Required for the register event.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
@@ -66,33 +77,34 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
   [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
 
-// Required for localNotification event
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void (^)(void))completionHandler
-{
-  [RNCPushNotificationIOS didReceiveNotificationResponse:response];
-}
-
 // Required for the registrationError event.
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
  [RNCPushNotificationIOS didFailToRegisterForRemoteNotificationsWithError:error];
 }
 
-- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-{
-#if DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-#else
-  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-#endif
-}
+//// Required for localNotification event
+//- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+//didReceiveNotificationResponse:(UNNotificationResponse *)response
+//         withCompletionHandler:(void (^)(void))completionHandler
+//{
+//  [RNCPushNotificationIOS didReceiveNotificationResponse:response];
+//}
 
 //Called when a notification is delivered to a foreground app.
 -(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
   completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
+}
+
+//Called when a user taps on a notification in the foreground.
+-(void)userNotificationCenter: (UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(nonnull void (^)(void))completionHandler
+{
+  NSMutableDictionary *userData = [NSMutableDictionary dictionaryWithDictionary:response.notification.request.content.userInfo];
+  [userData setObject:@(1) forKey:@"openedInForeground"];
+  [RNCPushNotificationIOS didReceiveRemoteNotification:userData];
+  completionHandler();
 }
 
 @end

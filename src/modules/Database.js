@@ -540,7 +540,7 @@ export default class Database {
           let strCurDateTime = this.getCurrentDateTimeString()
           db.transaction((tx) => {
             tx.executeSql(`INSERT INTO device (uuid, serial_number, battery, last_sync_time, is_connected, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
-                          [device.uuid, device.serialNumber, device.battery, device.lastSyncTime, true, device.userId,  strCurDateTime, strCurDateTime]).then(([tx, results]) => {
+                          [device.uuid, device.serialNumber, device.battery, device.lastSyncTime, device.isConnected, device.userId,  strCurDateTime, strCurDateTime]).then(([tx, results]) => {
               console.log(">>> insert device query completed")
               resolve(results)
             })
