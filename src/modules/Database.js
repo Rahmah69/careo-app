@@ -158,6 +158,7 @@ export default class Database {
             this.closeDatabase(db)
 
             console.log(">>> listUser - close database")
+            resolve(result)
           }).catch((err) => {
             console.log(">>> listUser Error: ", err)
 
@@ -538,15 +539,20 @@ export default class Database {
 
           console.log(">>> before insert device: ", device)
           let strCurDateTime = this.getCurrentDateTimeString()
+          let resolveResult = null
           db.transaction((tx) => {
             tx.executeSql(`INSERT INTO device (uuid, serial_number, battery, last_sync_time, is_connected, user_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
                           [device.uuid, device.serialNumber, device.battery, device.lastSyncTime, device.isConnected, device.userId,  strCurDateTime, strCurDateTime]).then(([tx, results]) => {
-              console.log(">>> insert device query completed")
-              resolve(results)
+              console.log(">>> insert device query completed, results: ", results)
+              // this.closeDatabase(db)
+              // resolve(results)
+              resolveResult = results
             })
           }).then((result) => {
+            console.log("insert device transaction then, results: ", result)
             this.closeDatabase(db)
 
+            resolve(resolveResult)
           }).catch((err) => {
             console.log(err)
           })

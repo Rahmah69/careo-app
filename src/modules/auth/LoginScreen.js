@@ -5,6 +5,8 @@ import {  View,  Text,   Alert,   TouchableOpacity  } from 'react-native'
 import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import LinearGradient from 'react-native-linear-gradient'
+import DeviceInfo from 'react-native-device-info'
+import { useHeaderHeight } from '@react-navigation/stack'
 
 import UserInput from './UserInput'
 import usernameImg from '../../../assets/images/icons/username.png'
@@ -31,7 +33,17 @@ class LoginScreen extends Component {
     }
   }
 
-  componentDidMount = async () => {
+  componentDidMount = () => {
+
+    console.log(">> Device ID: ", DeviceInfo.getModel())
+    // console.log(">>> iPhone Header Height: ", useHeaderHeight())
+
+    setTimeout(() => {
+      this.loadDB()
+    }, 1000)
+  }
+
+  loadDB = async () => {
 
     let deviceList = [
       {
@@ -119,15 +131,27 @@ class LoginScreen extends Component {
 
     await db.deleteAllDevice(1)
 
+    console.log(">>>>>> before insert device list")
     for (let device of deviceList) {
       await db.insertDevice(device)
     }
-    
+    console.log(">>>>>> after insert device list")
+
     let users = await db.listUser()
-    console.log(">>> login compoment did mount - users: ", users)
+    console.log(">>> login page user list loading - users: ", users)
     
     this.setState({ users: users })
+    
+    // this.onFocusPage = this.props.navigation.addListener('focus', async () => {
+    //   console.log(">>> login page focused ")
+    //   let users = await db.listUser()
+    //   console.log(">>> login page focused - users: ", users)
+      
+    //   this.setState({ users: users })
+    // })
   }
+
+
 
   showPass = () => {
     console.log("press the eye")

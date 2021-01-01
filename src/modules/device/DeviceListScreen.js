@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { colors, fonts } from '../../styles'
 import {db} from '../Database'
+import DeviceInfo from 'react-native-device-info'
 
 import batteryImg from "../../../assets/images/icons/battery.png"
 
@@ -165,6 +166,8 @@ class DeviceListScreen extends React.Component {
   }
 
   render() {
+    console.log(">>> Model: ", DeviceInfo.getModel())
+    console.log(">>> Header Height: ", HAED_PANEL_HEIGHT)
     let height = DEVICE_HEIGHT - HAED_PANEL_HEIGHT - BOTTOM_TAB_HEIGHT
     if (this.state.curDevice != null)
       height -= 160

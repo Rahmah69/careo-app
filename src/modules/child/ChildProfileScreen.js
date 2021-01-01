@@ -19,7 +19,7 @@ import {db} from '../Database'
 import HeadPanel from '../components/HeadPanel'
 
 import defaultAvatarImg from '../../../assets/images/icons/default-avatar.png'
-import {DEVICE_WIDTH, DEVICE_HEIGHT, HAED_PANEL_HEIGHT, BOTTOM_TAB_HEIGHT, INPUT_FIELD_HEIGHT} from '../Constant'
+import {DEVICE_WIDTH, DEVICE_HEIGHT, HAED_PANEL_HEIGHT, BOTTOM_TAB_HEIGHT, INPUT_FIELD_HEIGHT, isWideModel} from '../Constant'
 
 import PickerImage from '../components/PickerImage'
 import InputFieldWithDevider from '../components/InputFieldWithDevider'
@@ -415,8 +415,7 @@ class ChildProfileScreen extends React.Component {
 
         <KeyboardAwareScrollView
           resetScrollToCoords={{ x: 0, y: 0 }}
-          scrollEnabled={true}
-          style={styles.container}>
+          scrollEnabled={true}>
 
           <View style={styles.contentView}>
             <View style={{flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', height: DEVICE_HEIGHT / 5}}>
@@ -430,7 +429,7 @@ class ChildProfileScreen extends React.Component {
 
               {!this.state.isNameEditing && this.state.childInfo.name != '' ?
                 <Text 
-                  style={{color: '#125171', textAlign: 'center', fontSize: 25, fontWeight: 'bold', height: INPUT_FIELD_HEIGHT, marginTop: DEVICE_HEIGHT / 90}}
+                  style={{color: '#125171', textAlign: 'center', fontSize: 25, fontWeight: 'bold', height: INPUT_FIELD_HEIGHT, marginTop: isWideModel() ? 10 : 40}}
                   onPress={()=> {this.onChildNamePressed()}}
                 >
                   {this.state.childInfo.name}
@@ -505,7 +504,7 @@ class ChildProfileScreen extends React.Component {
               </TouchableOpacity>
             </View>
             :
-            <View flex={1} style={{marginTop: 50, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
+            <View flex={1} style={{marginTop: 30, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
               <TouchableOpacity 
                 style={styles.buttonStyle}
                 onPress={() => this.onSave()}
@@ -569,16 +568,16 @@ const styles = StyleSheet.create({
     flex:1, 
     justifyContent: 'space-between', 
     alignItems: 'center', 
-    height: (DEVICE_HEIGHT - HAED_PANEL_HEIGHT - BOTTOM_TAB_HEIGHT - 100),
+    // height: (DEVICE_HEIGHT - HAED_PANEL_HEIGHT - BOTTOM_TAB_HEIGHT - 100),
     width: '100%',
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 1,
-    // },
-    // shadowOpacity: .25,
-    // shadowRadius: 3.84,
-    // elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: .25,
+    shadowRadius: 3.84,
+    elevation: 5,
     
     marginBottom: DEVICE_HEIGHT / 10
   },

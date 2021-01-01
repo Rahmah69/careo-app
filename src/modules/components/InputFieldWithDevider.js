@@ -1,6 +1,6 @@
 import React from 'react'
 import {  StyleSheet,  View,  Text,  TextInput } from 'react-native'
-import {DEVICE_WIDTH, DEVICE_HEIGHT, INPUT_FIELD_HEIGHT, INPUT_FIELD_HORZ_MARGIN} from '../Constant'
+import {DEVICE_WIDTH, DEVICE_HEIGHT, INPUT_FIELD_HEIGHT, INPUT_FIELD_HORZ_MARGIN, isWideModel} from '../Constant'
 
 export default function InputFieldWithDevider(props) {
 
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'right',
     opacity: 0.8,
-    paddingTop: -10,
+    paddingTop: isWideModel() ? 0 : 20,
     textAlignVertical: 'center'
   },
   title: {

@@ -229,8 +229,7 @@ class UserProfileScreen extends React.Component {
 
         <KeyboardAwareScrollView
           resetScrollToCoords={{ x: 0, y: 0 }}
-          scrollEnabled={true}
-          style={styles.container}>
+          scrollEnabled={true}>
 
           <View style={contentView}>
             <View style={{justifyContent: 'space-around', alignItems: 'center', flexDirection: 'column', height: 200}}>

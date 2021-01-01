@@ -4,7 +4,6 @@ import {DEVICE_WIDTH, DEVICE_HEIGHT, INPUT_FIELD_HEIGHT, INPUT_FIELD_HORZ_MARGIN
 import RNPickerSelect from 'react-native-picker-select'
 
 export default function SelectFieldWithDevider(props) {
-
     return (      
       <View style={styles.container}>
         <View style={styles.input}>
@@ -46,7 +45,7 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 20,
     textAlign: 'right',
-    opacity: 0.8
+    opacity: 1
   },
   devider: {
     borderBottomColor: '#AAA', 
@@ -63,7 +62,7 @@ const pickerSelectStyles = StyleSheet.create({
     fontSize: 16,
     paddingVertical: 12,
     paddingLeft: 100,
-    borderWidth: 1,
+    borderWidth: 0, // 1,
     borderColor: 'white',
     borderRadius: 4,
     color: 'black',
@@ -73,7 +72,7 @@ const pickerSelectStyles = StyleSheet.create({
     fontSize: 16,
     paddingLeft: 100,
     paddingVertical: 8,
-    borderWidth: 0.5,
+    borderWidth: 0, // 0.5,
     borderColor: 'white',
     borderRadius: 8,
     color: 'black',

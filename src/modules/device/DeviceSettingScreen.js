@@ -201,8 +201,7 @@ class DeviceSettingScreen extends React.Component {
 
         <KeyboardAwareScrollView
           resetScrollToCoords={{ x: 0, y: 0 }}
-          scrollEnabled={true}
-          style={styles.container}>
+          scrollEnabled={true}>
 
           <View style={styles.contentView}>
             
@@ -211,7 +210,7 @@ class DeviceSettingScreen extends React.Component {
               <TextFieldWithDevider
                 title="UUID"
                 value={this.state.deviceInfo.uuid}
-                style={{paddingTop: 3}}
+                style={{paddingTop: 0, paddingLeft: 50}}
               />
               <TextFieldWithDevider
                 title="Serial Number"
@@ -237,7 +236,7 @@ class DeviceSettingScreen extends React.Component {
               />
             </View>
 
-            <View flex={1} style={{marginTop: 50, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
+            <View flex={1} style={{marginTop: 30, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
               <TouchableOpacity 
                 style={styles.buttonStyle}
                 onPress={() => this.onSave()}
@@ -299,16 +298,16 @@ const styles = StyleSheet.create({
     flex:1, 
     justifyContent: 'space-between', 
     alignItems: 'center', 
-    height: (DEVICE_HEIGHT - HAED_PANEL_HEIGHT - BOTTOM_TAB_HEIGHT - 100),
+    // height: (DEVICE_HEIGHT - HAED_PANEL_HEIGHT - BOTTOM_TAB_HEIGHT - 100),
     width: '100%',
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 1,
-    // },
-    // shadowOpacity: .25,
-    // shadowRadius: 3.84,
-    // elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: .25,
+    shadowRadius: 3.84,
+    elevation: 5,
     
     marginBottom: DEVICE_HEIGHT / 10
   },

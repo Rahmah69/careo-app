@@ -78,6 +78,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#C4CBC8',
     borderBottomRightRadius: 40,
     borderBottomLeftRadius: 40,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: .5,
+    shadowRadius: 3,
+    elevation: 5,
   },
   greetingText: {
     marginTop: DEVICE_HEIGHT / 30,

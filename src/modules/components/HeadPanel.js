@@ -41,7 +41,15 @@ const styles = StyleSheet.create({
     height: HAED_PANEL_HEIGHT, 
     width: '100%', 
     backgroundColor: '#C4CBC8',
-    paddingTop: 50,
+    paddingTop: (HAED_PANEL_HEIGHT - 35),
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: .8,
+    shadowRadius: 3.84,
+    elevation: 2,
   },
   headerDisplaySection: {
     flex: 1,

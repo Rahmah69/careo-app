@@ -3,7 +3,7 @@ import {DEVICE_WIDTH, DEVICE_HEIGHT} from '../modules/Constant'
 
 export const authStyles = StyleSheet.create({
   title: {
-    marginTop: DEVICE_HEIGHT / 10,
+    marginTop: DEVICE_HEIGHT / 15,
     textAlign: 'center',
     fontSize: 30,
     fontWeight: 'bold',
@@ -58,7 +58,7 @@ export const authStyles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   gotoButton: {
-    marginTop: 60,
+    marginTop: DEVICE_HEIGHT / 15,
     color: '#1E4663',
     fontWeight: 'bold',    
     textAlign: 'right',
