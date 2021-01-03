@@ -5,7 +5,6 @@ import {DEVICE_WIDTH, DEVICE_HEIGHT, INPUT_FIELD_HEIGHT, INPUT_FIELD_HORZ_MARGIN
 export default function TextFieldWithDevider(props) {
 
     const inputStyle = props.style ? props.style : {}
-    const style = props.style ? {...styles.input, ...inputStyle} : styles.input
     return (
       <View style={styles.container}>
         <View style={{justifyContent: 'center', alignItems: 'flex-start'}}>

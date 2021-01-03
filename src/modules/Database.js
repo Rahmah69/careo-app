@@ -158,7 +158,6 @@ export default class Database {
             this.closeDatabase(db)
 
             console.log(">>> listUser - close database")
-            resolve(result)
           }).catch((err) => {
             console.log(">>> listUser Error: ", err)
 
@@ -265,13 +264,13 @@ export default class Database {
               var len = results.rows.length
               for (let i = 0; i < len; i++) {
                 let row = results.rows.item(i)
-                console.log(`Child Id: ${row.id}, Child Name: ${row.name}, Age: ${row.age}, Blood Type: ${row.bloodType}, Condition: ${row.condition}, Relationship: ${row.relationship}, 
-                                      Image Path: ${row.imagePath}, UUID: ${row.uuid}, Serial Number: ${row.serialNumber}, User Id: ${row.userId} `)
+                // console.log(`Child Id: ${row.id}, Child Name: ${row.name}, Age: ${row.age}, Blood Type: ${row.bloodType}, Condition: ${row.condition}, Relationship: ${row.relationship}, 
+                //                       Image Path: ${row.imagePath}, UUID: ${row.uuid}, Serial Number: ${row.serialNumber}, User Id: ${row.userId} `)
                 const { id, name, age, bloodType, condition, relationship, imagePath, uuid, serialNumber, userId } = row
                 childs.push({ id, name, age, bloodType, condition, relationship, imagePath, uuid, serialNumber, userId })
               }
 
-              console.log(childs)
+              // console.log(childs)
               resolve(childs)
             })
           }).then((result) => {
@@ -329,7 +328,7 @@ export default class Database {
                 idNameList.push({ id, name, uuid })
               }
 
-              console.log(idNameList)
+              // console.log(idNameList)
               resolve(idNameList)
             })
           }).then((result) => {
@@ -453,7 +452,7 @@ export default class Database {
                 devices.push({ uuid, serialNumber, battery, lastSyncTime, isConnected, childId, childName, childPhoto, userId})
               }
 
-              console.log(devices)
+              // console.log(devices)
               resolve(devices)
             })
           }).then((result) => {
@@ -507,7 +506,7 @@ export default class Database {
         this.initDB().then((db) => {
           db.transaction((tx) => {
             tx.executeSql(`SELECT uuid, serial_number AS serialNumber FROM device WHERE user_id = ?`, [userId]).then(([tx, results]) => {
-              console.log("list device query completed")
+              console.log("getDeviceIDList completed")
               
               var len = results.rows.length
               for (let i = 0; i < len; i++) {
@@ -517,7 +516,7 @@ export default class Database {
                 devices.push({ uuid, serialNumber })
               }
 
-              console.log(devices)
+              // console.log(devices)
               resolve(devices)
             })
           }).then((result) => {
@@ -649,7 +648,7 @@ export default class Database {
                 notifications.push({ uuid, serialNumber, battery, time, content, confirmed, childName })
               }
 
-              console.log(notifications)
+              // console.log(notifications)
               resolve(notifications)
             })
           }).then((result) => {

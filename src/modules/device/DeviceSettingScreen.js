@@ -22,12 +22,12 @@ import {DEVICE_WIDTH, DEVICE_HEIGHT, HAED_PANEL_HEIGHT, BOTTOM_TAB_HEIGHT, INPUT
 
 import PickerImage from '../components/PickerImage'
 import InputFieldWithDevider from '../components/InputFieldWithDevider'
+import TextFieldWithDevider from '../components/TextFieldWithDevider'
 import SelectFieldWithDevider from '../components/SelectFieldWithDevider'
 
 import { setChildList } from '../child/ChildState'
 import { setDeviceList } from './DeviceState'
 import { DEVICE_LIST_PAGE_NAME } from '../navigation/stackNavigationData'
-import TextFieldWithDevider from '../components/TextFieldWithDevider'
 
 class DeviceSettingScreen extends React.Component {
 

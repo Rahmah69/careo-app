@@ -268,7 +268,7 @@ class UserProfileScreen extends React.Component {
               }
             </View>
             
-            <View flex={2} style={{marginTop: 30, flexDirection: 'column', justifyContent: 'space-between'}}>
+            <View style={{marginTop: 30, flexDirection: 'column', justifyContent: 'space-between'}}>
               <UserInput
                 source={usernameImg}
                 placeholder="Email"
@@ -313,7 +313,7 @@ class UserProfileScreen extends React.Component {
               />
             </View>
 
-            <View flex={1} style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
+            <View style={{marginTop: 30, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center'}}>
               <TouchableOpacity 
                 style={{height: 40, width: 100, alignItems: 'center', marginHorizontal: 30}}
                 onPress={() => this.onSave()}
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     flex:1, 
     justifyContent: 'space-around', 
     alignItems: 'center', 
-    height: (DEVICE_HEIGHT - HAED_PANEL_HEIGHT - BOTTOM_TAB_HEIGHT - 100),
+    // height: (DEVICE_HEIGHT - HAED_PANEL_HEIGHT - BOTTOM_TAB_HEIGHT - 100),
     // width: '100%',
     shadowColor: '#000',
     shadowOffset: {
