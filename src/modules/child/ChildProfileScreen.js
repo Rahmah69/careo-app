@@ -348,9 +348,11 @@ class ChildProfileScreen extends React.Component {
   }
 
   onCloseSerialNumPicker = () => {
+    console.log("onCloseSerialNumPicker: ", this.state.childInfo)
     let childInfo = this.state.childInfo
-    if (childInfo.serialNumber == null) {
+    if (childInfo.serialNumber == null || childInfo.serialNumber == '') {
       childInfo.uuid = null
+      console.log("uuid null set ")
 
     } else {
       for (let deviceIdInfo of this.state.uuidSerialNumList) {

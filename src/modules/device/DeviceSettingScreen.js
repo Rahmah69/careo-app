@@ -218,7 +218,7 @@ class DeviceSettingScreen extends React.Component {
               />
               <TextFieldWithDevider
                 title="Battery"
-                value={this.state.deviceInfo.battery}
+                value={this.state.deviceInfo.battery != null && this.state.deviceInfo.battery != -1 ? this.state.deviceInfo.battery : ''}
               />
               <TextFieldWithDevider
                 title="Last Sync Time"

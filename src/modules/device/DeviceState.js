@@ -85,17 +85,18 @@ const initialState = {
   //     userId: 1,      
   //   }
   // ],
-  curDevice: {
-    uuid: 'hhhhXXXX-6e7d-4601-bda2-bffaa68956ba',
-    serialNumber: 'SFQIE8',
-    battery: 40,
-    lastSyncTime: '2020-11-09 14:20:10',
-    isConnected: true,
-    childId: 0,
-    childName: '',
-    childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
-    userId: 1,
-  },
+  curDevice: null,
+  // curDevice: {
+  //   uuid: 'hhhhXXXX-6e7d-4601-bda2-bffaa68956ba',
+  //   serialNumber: 'SFQIE8',
+  //   battery: 40,
+  //   lastSyncTime: '2020-11-09 14:20:10',
+  //   isConnected: true,
+  //   childId: 0,
+  //   childName: '',
+  //   childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+  //   userId: 1,
+  // },
   selDevIndex: -1,
   selUUID: ''
 }

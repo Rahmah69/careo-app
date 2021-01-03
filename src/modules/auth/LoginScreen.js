@@ -247,7 +247,7 @@ class LoginScreen extends Component {
       return
     }
     
-    
+    this.setState({loading: true})
     // save the user information and go to the dashboard page
     this.props.setUser(userInfo)
     this.props.setIsLoggedIn(true)
@@ -255,6 +255,7 @@ class LoginScreen extends Component {
     console.log(">>> logged user info: ", this.props.userInfo)
 
     // load main information like child list, device list
+    await db.updateAllDisconnected(this.props.userInfo.id)
     let childList = await db.listChild(this.props.userInfo.id)
     let deviceList = await db.listDevice(this.props.userInfo.id)
     let lastNotiList = await db.getLastNotificationsByConnectedDevice(this.props.userInfo.id)
@@ -273,7 +274,10 @@ class LoginScreen extends Component {
     
     this.props.navigation.navigate(MAIN_TAB_NAV_NAME)
 
-    this.reset()
+    setTimeout(() => {
+      this.setState({loading: false})
+      this.reset()
+    }, 500)
   }
 
   onRegister = () => {
@@ -344,7 +348,7 @@ class LoginScreen extends Component {
             color="white"
             indicatorSize="large"
             messageFontSize={24}
-            message="Loading... 😀😀😀"
+            message="Loading..."
           />
         </View>
       </KeyboardAwareScrollView>

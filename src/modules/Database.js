@@ -585,6 +585,54 @@ export default class Database {
       })  
     }
 
+    updateConnectedInfoOfDevice(uuid, isConnected) {
+      return new Promise((resolve) => {
+        const users = []
+        this.initDB().then((db) => {
+
+          let strCurDateTime = this.getCurrentDateTimeString()
+          db.transaction((tx) => {
+            tx.executeSql(`UPDATE device SET is_connected = ?, updated_at = ? WHERE uuid = ?`, 
+                            [isConnected, strCurDateTime, uuid]).then(([tx, results]) => {
+              console.log("updated connected info of device ")
+              resolve(results)
+            })
+          }).then((result) => {
+            this.closeDatabase(db)
+
+          }).catch((err) => {
+            console.log(err)
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      })  
+    }
+
+    updateAllDisconnected(userId) {
+      return new Promise((resolve) => {
+        const users = []
+        this.initDB().then((db) => {
+
+          let strCurDateTime = this.getCurrentDateTimeString()
+          db.transaction((tx) => {
+            tx.executeSql(`UPDATE device SET is_connected = false, updated_at = ? WHERE user_id = ?`, 
+                            [strCurDateTime, userId]).then(([tx, results]) => {
+              console.log("updated all disconnected ")
+              resolve(results)
+            })
+          }).then((result) => {
+            this.closeDatabase(db)
+
+          }).catch((err) => {
+            console.log(err)
+          })
+        }).catch((err) => {
+          console.log(err)
+        })
+      })  
+    }
+
     deleteDevice(uuid) {
       return new Promise((resolve) => {
         const users = []

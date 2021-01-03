@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image,
   Modal,
+  Alert,
   AppState,
   Platform, 
   NativeModules,
@@ -19,18 +20,22 @@ import { colors, fonts } from '../../styles'
 import {db} from '../Database'
 import DeviceInfo from 'react-native-device-info'
 
+import BleManager from 'react-native-ble-manager'
+import LinearGradient from 'react-native-linear-gradient'
+import ProgressCircle from 'react-native-progress-circle'
+import OrientationLoadingOverlay from 'react-native-orientation-loading-overlay'
+
 import batteryImg from "../../../assets/images/icons/battery.png"
 
 import HeadPanel from '../components/HeadPanel'
-import LinearGradient from 'react-native-linear-gradient'
-import ProgressCircle from 'react-native-progress-circle'
-import { setSelUUID } from './DeviceState'
 import { BOTTOM_TAB_HEIGHT, DEVICE_HEIGHT, DEVICE_WIDTH, HAED_PANEL_HEIGHT } from '../Constant'
 import { DEVICE_SETTING_PAGE_NAME } from '../navigation/stackNavigationData'
 import TextFieldWithDevider from '../components/TextFieldWithDevider'
 import SelectFieldWithDevider from '../components/SelectFieldWithDevider'
 
-import BleManager from 'react-native-ble-manager'
+import { setSelUUID, setDeviceList } from './DeviceState'
+import { setChildList } from '../child/ChildState'
+
 const BleManagerModule = NativeModules.BleManager
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule)
 
@@ -40,19 +45,20 @@ class DeviceListScreen extends React.Component {
     super(props)
     this.state = {
       scanning: false,
+      connecting: false,
       peripherals: new Map(),
       appState: '',
       availDevList: [
-        {uuid: 'aaaaXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childId: 1, childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png'},
-        {uuid: 'bbbbXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE2', childId: 0, childName: '', childPhoto: ''},
-        {uuid: 'ccccXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childId: 1, childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png'},
-        {uuid: 'ddddXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childId: 1, childName: '', childPhoto: ''},
-        {uuid: 'eeeeXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE5', childId: 1, childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png'},
-        {uuid: 'ffffXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childId: 1, childName: '', childPhoto: ''},
-        {uuid: 'ggggXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE7', childId: 1, childName: '', childPhoto: ''},
+        // {uuid: 'aaaaXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childId: 1, childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png', isRegistered: true},
+        // {uuid: 'bbbbXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE2', childId: 0, childName: '', childPhoto: '', isRegistered: true},
+        // {uuid: 'ccccXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childId: 1, childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png', isRegistered: true},
+        // {uuid: 'ddddXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childId: 1, childName: '', childPhoto: '', isRegistered: false},
+        // {uuid: 'eeeeXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE5', childId: 1, childName: '', childPhoto: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png', isRegistered: true},
+        // {uuid: 'ffffXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: '', childId: 1, childName: '', childPhoto: '', isRegistered: true},
+        // {uuid: 'ggggXXXX-6e7d-4601-bda2-bffaa68956ba', serialNumber: 'SFQIE7', childId: 1, childName: '', childPhoto: '', isRegistered: true},
       ],
-      curDevice: this.props.curDevice,
-      // curDevice: null,
+      // curDevice: this.props.curDevice,
+      curDevice: null,
       selDeviceInfo: {
         uuid: '',
         serialNumber: '',
@@ -105,12 +111,15 @@ class DeviceListScreen extends React.Component {
       });
     }
 
-    this.startScan()
+    setTimeout(() => {
+      this.startScan()
+    }, 500)
 
     this.onFocusPage = this.props.navigation.addListener('focus', async () => {
       console.log(">>> device list page focus / cur device: ", this.state.curDevice)
 
       await this.getChildList()
+      this.updateAvailDevList()
     })
   }
 
@@ -132,6 +141,7 @@ class DeviceListScreen extends React.Component {
   }
 
   handleDisconnectedPeripheral = (data) => {
+    console.log('Disconnected from ' + data.peripheral)
     let peripherals = this.state.peripherals
     let peripheral = peripherals.get(data.peripheral)
     if (peripheral) {
@@ -139,7 +149,6 @@ class DeviceListScreen extends React.Component {
       peripherals.set(peripheral.id, peripheral)
       this.setState({peripherals})
     }
-    console.log('Disconnected from ' + data.peripheral)
   }
 
   handleUpdateValueForCharacteristic = (data) => {
@@ -147,44 +156,117 @@ class DeviceListScreen extends React.Component {
   }
 
   handleScanFinished = () => {
-    console.log('Scan is finished')
-    if (this.scanCount < 3) {
-      this.scanCount = this.scanCount + 1
-      BleManager.scan([], 5, true).then((results) => {
-        console.log('Scanning...')
-      })
-
-    } else {
-      this.setState({ scanning: false })
-    }
+    console.log("scan finished")
+    this.setState({ scanning: false })
   }
 
   handleDiscoverPeripheral = (peripheral) => {
+    console.log("discovered peripheral: ", peripheral)
+    if (!peripheral.advertising.isConnectable) 
+      return
+
+    if (this.state.curDevice != null && this.state.curDevice.uuid == peripheral.id)
+      return
+
+    // check if the uuid already exists in the avail dev list
+    for (let devInfo of this.state.availDevList) {
+      if (devInfo.uuid == peripheral.id)
+        return
+    }
+
+    // add dev in the available dev list
+    let availDev = {
+      uuid: peripheral.id, serialNumber: '', childId: 0, childName: '', childPhoto: '', isRegistered: false
+    }
+    for (let devInfo of this.props.deviceList) {
+      if (devInfo.uuid == peripheral.id) {
+        availDev.serialNumber = devInfo.serialNumber
+        availDev.childId = devInfo.childId
+        availDev.childName = devInfo.childName
+        availDev.childPhoto = devInfo.childPhoto
+        availDev.isRegistered = true
+
+        if (devInfo.isConnected) {
+          return
+        }
+
+        break
+      }
+    }
+
+    let availDevList = this.state.availDevList
+    availDevList.push(availDev)
+    this.setState({availDevList: availDevList})
+    // console.log("discovered peripheral: ", peripheral.id, " , isConnectable: ", peripheral.advertising.isConnectable)
+  }
+
+  updateAvailDevList = () => {
+
+    // update available device list
+    let availDevList = this.state.availDevList
+    for (let devInfo of availDevList) {
+      let bMatchedChild = false
+
+      for (let child of this.props.childList) {
+        if (child.uuid == devInfo.uuid) {
+          devInfo.childId = child.id
+          devInfo.childName = child.name
+          devInfo.childPhoto = child.imagePath
+          bMatchedChild = true
+          break
+        }
+      }
+
+      if (!bMatchedChild) {
+        devInfo.childId = 0
+        devInfo.childName = ''
+        devInfo.childPhoto = ''
+      }
+    }
+
+    // update current connected device
+    let curDevice = this.state.curDevice
+    for (let child of this.props.childList) {
+      if (child.uuid == curDevice.uuid) {
+        curDevice.childId = child.id
+        curDevice.childName = child.name
+        curDevice.childPhoto = child.imagePath
+        break
+      }
+    }
+
+    this.setState({
+      availDevList: availDevList,
+      curDevice: curDevice
+    })
   }
 
   startScan = async () => {
+    // return 
     console.log("on Scan ")
     let curDevice = null
     let availDevList = []
     let deviceList = await db.listDevice(this.props.userInfo.id)
 
-    // if (!this.state.scanning) {
-    //   this.scanCount = 0
-    //   this.setState({peripherals: new Map()})
-    //   BleManager.scan([], 5, true).then((results) => {
-    //     console.log('Scanning...')
-    //     this.setState({scanning: true})
-    //   })
-    // }
+    if (!this.state.scanning) {
+      this.scanCount = 0
+      this.setState({availDevList: []})
+      BleManager.scan([], 10, true).then((results) => {
+        console.log('Scanning...')
+        this.setState({scanning: true})
+      })
+    }
 
-    this.setState({scanning: true})
+    return
+
     // console.log("on Scan dev list: ", deviceList)
     for (let device of deviceList) {
       let availDev = {
         uuid: device.uuid,
         serialNumber: device.serialNumber,
         childName: device.childName,
-        childPhoto: device.childPhoto
+        childPhoto: device.childPhoto,
+        isRegistered: true
       }
 
       if (device.isConnected == 1)
@@ -217,7 +299,11 @@ class DeviceListScreen extends React.Component {
 
   onConnect = (deviceInfo) => {
     console.log(">>> on connect: ", deviceInfo)
-    this.setState({selDeviceInfo: deviceInfo, connectModalVisible: true})
+    this.setState({
+      selDeviceInfo: deviceInfo, 
+      connectModalVisible: true, 
+      percent: 0
+    })
   }
 
   onViewDevice = async (uuid) => {
@@ -239,7 +325,106 @@ class DeviceListScreen extends React.Component {
   }
 
   connectBle = () => {
-    
+
+    this.setState({connecting: true, percent: 5})
+
+    BleManager.connect(this.state.selDeviceInfo.uuid)
+    .then(async () => {
+      console.log(">>> connected: ", this.state.selDeviceInfo.uuid)
+      this.setState({percent: 50})
+      let availDevList = this.state.availDevList
+
+      let i = 0
+      for (let devInfo of availDevList) {
+
+        if (devInfo.uuid == this.state.selDeviceInfo.uuid) {
+
+          console.log(">>> found dev info in available dev list ")
+
+          devInfo.childId = this.state.selDeviceInfo.childId
+          
+          if (devInfo.childId != null && devInfo.childId != 0) {
+            console.log(">>> found child info ")
+
+            await db.updateChildWithUUID(devInfo.childId, devInfo.uuid)
+            let childList = await db.listChild(this.props.userInfo.id)
+
+            for (let child of childList) {
+              if (devInfo.childId == child.id) {
+                devInfo.childName = child.name
+                devInfo.childPhoto = child.imagePath
+                break
+              }
+            }
+
+            await this.props.setChildList(childList)
+          }
+
+          // update isConnected of old device as false
+          if (this.state.curDevice != null) {
+            console.log(">>> update old device info ")
+            await db.updateConnectedInfoOfDevice(this.state.curDevice.uuid, false)
+            availDevList.push(this.state.curDevice)
+          }
+
+          let device = await db.getDevice(devInfo.uuid)
+          if (device == null) {
+            device = {
+              uuid: devInfo.uuid,
+              serialNumber: devInfo.serialNumber, 
+              battery: -1, 
+              lastSyncTime: '', 
+              isConnected: true,
+              childId: devInfo.childId,
+              childName: devInfo.childName,
+              childPhoto: devInfo.childPhoto,
+              userId: this.props.userInfo.id
+            }
+
+            await db.insertDevice(device)
+
+          } else {
+            await db.updateConnectedInfoOfDevice(devInfo.uuid, true)
+            device.isConnected = true
+          }
+
+          device.isRegistered = true
+
+          availDevList.splice(i, 1)
+          
+          setTimeout(() => {
+            this.setState({percent: 100})
+
+            setTimeout(() => {
+              this.setState({
+                curDevice: device,
+                availDevList: availDevList,
+                connectModalVisible: false,
+                connecting: false,
+              })
+            }, 500)
+
+          }, 500)
+
+          break
+        }
+
+        i++
+      }
+    })
+    .catch((error) => {
+      console.log("Connection Error: ", error)
+      this.setState({
+        connecting: false,
+      })
+      Alert.alert(
+        'Failed',
+        error,
+        [
+          { text: 'Close' }
+        ]
+      )
+    })
   }
 
   closeModal = () => {
@@ -314,7 +499,7 @@ class DeviceListScreen extends React.Component {
                 <Image style={{flex: 1, height: 45, resizeMode: 'stretch'}} source={batteryImg}/>
               </View>
               <Text style={{flex: 1, fontSize: 11, textAlign: 'center', textAlignVertical: 'bottom', color: '#1C9E9C', position: 'relative'}}>
-                {item.battery != null ? item.battery.toString() + '%' : 'NaN'}
+                {item.battery != null && item.battery != -1 ? item.battery.toString() + '%' : 'NaN'}
               </Text>  
             </View>
           </View>
@@ -334,14 +519,14 @@ class DeviceListScreen extends React.Component {
       <View style={styles.container}>
         <HeadPanel title="Device List"/>
 
-        <View style={{flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center'}}>
+        <View style={{flexDirection: 'column', justifyContent: 'flex-start'}}>
           <View style={{flexDirection: 'column', justifyContent: 'flex-start', height: height}}>
             <View style={{marginLeft: 20, marginTop: 20, flexDirection: 'row', justifyContent: 'flex-start', alignSelf: 'flex-start'}}>
-              <Text style={{textAlignVertical: 'center', color: '#125171', fontSize: 16, fontWeight: 'bold', marginRight: 20, marginTop: 5}}>Available CareO List</Text>
+              <Text style={{textAlignVertical: 'center', textAlign: 'left', color: '#125171', fontSize: 16, fontWeight: 'bold', marginRight: 20, marginTop: 5}}>Available CareO List</Text>
 
               <TouchableOpacity
                 style={{ height: 30, width: 80, }}
-                onPress={() => {this.state.scanning ? this.stopScan() : this.startScan()}}
+                onPress={() => {this.startScan()}}
                 activeOpacity={.5}
               >
                 <LinearGradient
@@ -350,7 +535,7 @@ class DeviceListScreen extends React.Component {
                   start={{x: 0, y: 0}}
                   end={{x: 0.5, y: 0.6}}
                 >
-                  <Text style={{fontSize: 15, color: '#FFF', textAlign: 'center'}}>{this.state.scanning ? "Stop" : "Scan"}</Text>
+                  <Text style={{fontSize: 15, color: '#FFF', textAlign: 'center'}}>{"Scan"}</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
@@ -363,6 +548,14 @@ class DeviceListScreen extends React.Component {
           </View>
           { this.state.curDevice != null ? this.renderConnectedCareOItem(this.state.curDevice) : <View/> }
         </View>
+
+        <OrientationLoadingOverlay
+          visible={this.state.scanning}
+          color="white"
+          indicatorSize="large"
+          messageFontSize={24}
+          message="Scanning..."
+        />
 
         <Modal 
           animationType="fade"
@@ -378,7 +571,7 @@ class DeviceListScreen extends React.Component {
               shadowColor="#999"
               bgColor="#fff"
             >            
-              <Text style={{ fontSize: 18 }}>{this.state.percent}</Text>
+              <Text style={{ fontSize: 18 }}>{this.state.percent + '%'}</Text>
             </ProgressCircle>
 
             <TextFieldWithDevider
@@ -409,7 +602,7 @@ class DeviceListScreen extends React.Component {
                     start={{x: 0, y: 0}}
                     end={{x: 0.5, y: 0.6}}
                 >
-                  <Text style={{fontSize: 15, color: '#FFF', textAlign: 'center'}}>Connect</Text>
+                  <Text style={{fontSize: 15, color: '#FFF', textAlign: 'center'}} disable={this.state.connecting}>Connect</Text>
                 </LinearGradient>
               </TouchableOpacity>
               <TouchableOpacity
@@ -424,7 +617,7 @@ class DeviceListScreen extends React.Component {
                     start={{x: 0.4, y: 0}}
                     end={{x: 0.4, y: 1.5}}
                 >
-                  <Text style={{fontSize: 15, color: '#FFF', textAlign: 'center'}}>Cancel</Text>
+                  <Text style={{fontSize: 15, color: '#FFF', textAlign: 'center'}} disable={this.state.connecting}>Cancel</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
@@ -439,11 +632,15 @@ class DeviceListScreen extends React.Component {
 export default compose(
   connect(
     state => ({
+      deviceList: state.device.deviceList,
+      childList: state.child.childList,
       curDevice: state.device.curDevice,
       userInfo: state.auth.userInfo,
     }),
     dispatch => ({
       setSelUUID: (selUUID) => dispatch(setSelUUID(selUUID)),
+      setChildList: (childList) => dispatch(setChildList(childList)),
+      setDeviceList: (deviceList) => dispatch(setDeviceList(deviceList))
     }),
   )
 )(DeviceListScreen)
@@ -468,7 +665,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
     marginVertical: 10,
-    marginHorizontal: 10,
+    marginHorizontal: CARD_HORZ_MARGIN,
     width: DEVICE_WIDTH - (CARD_HORZ_MARGIN * 2),
     shadowColor: '#444',
     shadowOpacity: 1,
